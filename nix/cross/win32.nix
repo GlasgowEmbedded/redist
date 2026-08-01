@@ -1,6 +1,7 @@
 {
   pkgs,
   overlays ? [ ],
+  yosys,
 }:
 
 import pkgs.path {
@@ -8,5 +9,6 @@ import pkgs.path {
   crossSystem = pkgs.lib.systems.examples.mingw-msvcrt-i686;
 
   overlays = overlays ++ [
+    (pkgs.callPackage ./win-overlay.nix { inherit yosys; })
   ];
 }

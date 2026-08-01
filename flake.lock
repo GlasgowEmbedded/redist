@@ -37,7 +37,8 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "yosys": "yosys"
       }
     },
     "systems": {
@@ -53,6 +54,32 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "yosys": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785584856,
+        "narHash": "sha256-1XRENjfkJJMZ3NgonrMkFZDGFC2+sjMLlzHGEYHq/dU=",
+        "ref": "main",
+        "rev": "41a4b5a039d1f6e04d9c577d3f186ba85f6f1f01",
+        "revCount": 17596,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/YosysHQ/Yosys"
+      },
+      "original": {
+        "ref": "main",
+        "rev": "41a4b5a039d1f6e04d9c577d3f186ba85f6f1f01",
+        "type": "git",
+        "url": "https://github.com/YosysHQ/Yosys"
       }
     }
   },
