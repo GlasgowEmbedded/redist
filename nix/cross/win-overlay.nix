@@ -14,6 +14,7 @@ final: prev: {
       yosys = yosys.overrideAttrs (oldAttrs: {
         cmakeFlags = oldAttrs.cmakeFlags ++ [
           (lib.cmakeBool "YOSYS_WITHOUT_SLANG" true)
+          (lib.cmakeBool "YOSYS_WITHOUT_TCL" true)
         ];
       });
     }
