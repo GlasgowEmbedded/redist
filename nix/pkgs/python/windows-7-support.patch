@@ -1,0 +1,588 @@
+From 48cce17aa88d256df5f87116bc2ad331fb63d963 Mon Sep 17 00:00:00 2001
+From: bin <bin@sleepy.rs>
+Date: Fri, 31 Jul 2026 19:34:44 +0100
+Subject: Patches for compilation on Windows 7.
+
+Patches were manually applied and sourced from:
+https://github.com/adang1345/PythonVista
+---
+ Include/internal/pycore_runtime_structs.h | 17 +++++
+ Lib/_pyrepl/main.py                       | 27 ++++----
+ Modules/_winapi.c                         | 17 ++++-
+ Modules/posixmodule.c                     | 81 +++++++++++++++++------
+ Modules/socketmodule.c                    | 20 +++++-
+ Modules/timemodule.c                      | 46 ++++++++++---
+ Python/ceval.c                            |  3 +-
+ Python/fileutils.c                        |  8 ++-
+ Python/pystate.c                          | 25 +++++++
+ Python/pytime.c                           | 34 ++++++++--
+ 10 files changed, 227 insertions(+), 51 deletions(-)
+
+diff --git a/Include/internal/pycore_runtime_structs.h b/Include/internal/pycore_runtime_structs.h
+index 78f236a51a1..6c1b1050adb 100644
+--- a/Include/internal/pycore_runtime_structs.h
++++ b/Include/internal/pycore_runtime_structs.h
+@@ -91,9 +91,19 @@ typedef struct {
+     PyTime_t denom;
+ } _PyTimeFraction;
+ 
++
++#ifdef MS_WINDOWS
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
++typedef VOID(WINAPI *GetSystemTimePreciseAsFileTimeFunc)(LPFILETIME lpSystemTimeAsFileTime);
++#endif
++
+ struct _Py_time_runtime_state {
+ #if defined(MS_WINDOWS) || defined(__APPLE__)
+     _PyTimeFraction base;
++#ifdef MS_WINDOWS
++    GetSystemTimePreciseAsFileTimeFunc Py_GetSystemTimePreciseAsFileTime;
++#endif
+ #else
+     char _unused;
+ #endif
+@@ -137,6 +147,10 @@ struct _Py_static_objects {
+     } singletons;
+ };
+ 
++#ifdef MS_WINDOWS
++typedef VOID(WINAPI *GetCurrentThreadStackLimitsFunc)(PULONG_PTR LowLimit, PULONG_PTR HighLimit);
++#endif
++
+ /* Full Python runtime state */
+ 
+ /* _PyRuntimeState holds the global state for the CPython runtime.
+@@ -278,6 +292,9 @@ struct pyruntimestate {
+     struct _Py_unicode_runtime_state unicode_state;
+     struct _types_runtime_state types;
+     struct _Py_time_runtime_state time;
++#ifdef MS_WINDOWS
++    GetCurrentThreadStackLimitsFunc Py_GetCurrentThreadStackLimits;
++#endif
+ 
+ #if defined(__EMSCRIPTEN__) && defined(PY_CALL_TRAMPOLINE)
+     // Used in "Python/emscripten_trampoline.c" to choose between wasm-gc
+diff --git a/Lib/_pyrepl/main.py b/Lib/_pyrepl/main.py
+index 447eb1e551e..4fdeff00012 100644
+--- a/Lib/_pyrepl/main.py
++++ b/Lib/_pyrepl/main.py
+@@ -6,20 +6,23 @@
+ 
+ CAN_USE_PYREPL: bool
+ FAIL_REASON: str
+-try:
+-    if sys.platform == "win32" and sys.getwindowsversion().build < 10586:
+-        raise RuntimeError("Windows 10 TH2 or later required")
+-    if not os.isatty(sys.stdin.fileno()):
+-        raise OSError(errno.ENOTTY, "tty required", "stdin")
+-    from .simple_interact import check
+-    if err := check():
+-        raise RuntimeError(err)
+-except Exception as e:
++if sys.platform == "win32" and sys.getwindowsversion().build < 10586:
++    # Windows 10 TH2 or later required
+     CAN_USE_PYREPL = False
+-    FAIL_REASON = f"warning: can't use pyrepl: {e}"
+-else:
+-    CAN_USE_PYREPL = True
+     FAIL_REASON = ""
++else:
++    try:
++        if not os.isatty(sys.stdin.fileno()):
++            raise OSError(errno.ENOTTY, "tty required", "stdin")
++        from .simple_interact import check
++        if err := check():
++            raise RuntimeError(err)
++    except Exception as e:
++        CAN_USE_PYREPL = False
++        FAIL_REASON = f"warning: can't use pyrepl: {e}"
++    else:
++        CAN_USE_PYREPL = True
++        FAIL_REASON = ""
+ 
+ 
+ def interactive_console(mainmodule=None, quiet=False, pythonstartup=False):
+diff --git a/Modules/_winapi.c b/Modules/_winapi.c
+index cddaac1c67a..ad731a347ca 100644
+--- a/Modules/_winapi.c
++++ b/Modules/_winapi.c
+@@ -114,8 +114,11 @@
+ #define STARTF_UNTRUSTEDSOURCE 0x00008000
+ #endif
+ 
++typedef HRESULT(WINAPI *CopyFile2Func)(PCWSTR pwszExistingFileName, PCWSTR pwszNewFileName, COPYFILE2_EXTENDED_PARAMETERS *pExtendedParameters);
++
+ typedef struct {
+     PyTypeObject *overlapped_type;
++    CopyFile2Func Py_CopyFile2;
+ } WinApiState;
+ 
+ static inline WinApiState*
+@@ -2943,7 +2946,7 @@ _winapi_CopyFile2_impl(PyObject *module, LPCWSTR existing_file_name,
+     }
+     */
+     Py_BEGIN_ALLOW_THREADS;
+-    hr = CopyFile2(existing_file_name, new_file_name, &params);
++    hr = winapi_get_state(module)->Py_CopyFile2(existing_file_name, new_file_name, &params);
+     Py_END_ALLOW_THREADS;
+     /* For future implementation.
+     if (progress_routine != Py_None) {
+@@ -3007,6 +3010,10 @@ static PyMethodDef winapi_functions[] = {
+     _WINAPI_GETFILETYPE_METHODDEF
+     _WINAPI__MIMETYPES_READ_WINDOWS_REGISTRY_METHODDEF
+     _WINAPI_NEEDCURRENTDIRECTORYFOREXEPATH_METHODDEF
++    {NULL, NULL}
++};
++
++static PyMethodDef winapi_functions_copyfile2[] = {
+     _WINAPI_COPYFILE2_METHODDEF
+     {NULL, NULL}
+ };
+@@ -3037,6 +3044,14 @@ static int winapi_exec(PyObject *m)
+         return -1;
+     }
+ 
++    HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
++    if (!hKernel32) return -1;
++    if ((st->Py_CopyFile2 = (CopyFile2Func)GetProcAddress(hKernel32, "CopyFile2")) != NULL &&
++        PyModule_AddFunctions(m, winapi_functions_copyfile2) < 0)
++    {
++        return -1;
++    }
++
+     PyObject *d = PyModule_GetDict(m);
+ 
+     /* constants */
+diff --git a/Modules/posixmodule.c b/Modules/posixmodule.c
+index bb4a2d52a53..32305e056d2 100644
+--- a/Modules/posixmodule.c
++++ b/Modules/posixmodule.c
+@@ -1186,6 +1186,14 @@ dir_fd_converter(PyObject *o, void *p)
+     }
+ }
+ 
++#ifdef MS_WINDOWS
++#include <processsnapshot.h>
++typedef DWORD(WINAPI *GetActiveProcessorCountFunc)(WORD GroupNumber);
++typedef DWORD(WINAPI *PssCaptureSnapshotFunc)(HANDLE ProcessHandle, PSS_CAPTURE_FLAGS CaptureFlags, DWORD ThreadContextFlags, HPSS *SnapshotHandle);
++typedef DWORD(WINAPI *PssQuerySnapshotFunc)(HPSS SnapshotHandle, PSS_QUERY_INFORMATION_CLASS InformationClass, void *Buffer, DWORD BufferLength);
++typedef DWORD(WINAPI *PssFreeSnapshotFunc)(HANDLE ProcessHandle, HPSS SnapshotHandle);
++#endif
++
+ typedef struct {
+     PyObject *billion;
+     PyObject *DirEntryType;
+@@ -1210,6 +1218,12 @@ typedef struct {
+     // times() clock frequency in hertz; used by os.times()
+     long ticks_per_second;
+ #endif
++#ifdef MS_WINDOWS
++    GetActiveProcessorCountFunc Py_GetActiveProcessorCount;
++    PssCaptureSnapshotFunc Py_PssCaptureSnapshot;
++    PssQuerySnapshotFunc Py_PssQuerySnapshot;
++    PssFreeSnapshotFunc Py_PssFreeSnapshot;
++#endif
+ } _posixstate;
+ 
+ 
+@@ -9465,7 +9479,7 @@ os_setpgrp_impl(PyObject *module)
+ 
+ #ifdef MS_WINDOWS
+ #include <winternl.h>
+-#include <processsnapshot.h>
++// #include <processsnapshot.h>
+ 
+ // The structure definition in winternl.h may be incomplete.
+ // This structure is the full version from the MSDN documentation.
+@@ -9541,7 +9555,7 @@ win32_getppid_fast(void)
+ }
+ 
+ static PyObject*
+-win32_getppid(void)
++win32_getppid(PyObject *module)
+ {
+     DWORD error;
+     PyObject* result = NULL;
+@@ -9555,24 +9569,31 @@ win32_getppid(void)
+     }
+ 
+     // If failure occurs in win32_getppid_fast(), fall back to using the PSS API.
++    _posixstate *st = get_posix_state(module);
++    PssCaptureSnapshotFunc Py_PssCaptureSnapshot = st->Py_PssCaptureSnapshot;
++    PssQuerySnapshotFunc Py_PssQuerySnapshot = st->Py_PssQuerySnapshot;
++    PssFreeSnapshotFunc Py_PssFreeSnapshot = st->Py_PssFreeSnapshot;
++    if (Py_PssCaptureSnapshot) {
++        error = Py_PssCaptureSnapshot(process, PSS_CAPTURE_NONE, 0, &snapshot);
++        if (error != ERROR_SUCCESS) {
++            return PyErr_SetFromWindowsErr(error);
++        }
+ 
+-    error = PssCaptureSnapshot(process, PSS_CAPTURE_NONE, 0, &snapshot);
+-    if (error != ERROR_SUCCESS) {
+-        return PyErr_SetFromWindowsErr(error);
+-    }
++        PSS_PROCESS_INFORMATION info;
++        error = Py_PssQuerySnapshot(snapshot, PSS_QUERY_PROCESS_INFORMATION, &info,
++            sizeof(info));
++        if (error == ERROR_SUCCESS) {
++            result = PyLong_FromUnsignedLong(info.ParentProcessId);
++        } else {
++            result = PyErr_SetFromWindowsErr(error);
++        }
+ 
+-    PSS_PROCESS_INFORMATION info;
+-    error = PssQuerySnapshot(snapshot, PSS_QUERY_PROCESS_INFORMATION, &info,
+-                             sizeof(info));
+-    if (error == ERROR_SUCCESS) {
+-        result = PyLong_FromUnsignedLong(info.ParentProcessId);
+-    }
+-    else {
+-        result = PyErr_SetFromWindowsErr(error);
++        Py_PssFreeSnapshot(process, snapshot);
++        return result;
++    } else {
++        PyErr_SetString(PyExc_OSError, "unable to obtain parent PID");
++        return NULL;
+     }
+-
+-    PssFreeSnapshot(process, snapshot);
+-    return result;
+ }
+ #endif /*MS_WINDOWS*/
+ 
+@@ -9592,7 +9613,7 @@ os_getppid_impl(PyObject *module)
+ /*[clinic end generated code: output=43b2a946a8c603b4 input=e17c1de18f41316b]*/
+ {
+ #ifdef MS_WINDOWS
+-    return win32_getppid();
++    return win32_getppid(module);
+ #else
+     return PyLong_FromPid(getppid());
+ #endif
+@@ -15490,7 +15511,14 @@ os_cpu_count_impl(PyObject *module)
+     int ncpu = 0;
+ #ifdef MS_WINDOWS
+ # ifdef MS_WINDOWS_DESKTOP
+-    ncpu = GetActiveProcessorCount(ALL_PROCESSOR_GROUPS);
++    GetActiveProcessorCountFunc Py_GetActiveProcessorCount = get_posix_state(module)->Py_GetActiveProcessorCount;
++    if (Py_GetActiveProcessorCount) {
++        ncpu = Py_GetActiveProcessorCount(ALL_PROCESSOR_GROUPS);
++    } else {
++        SYSTEM_INFO sysinfo;
++        GetSystemInfo(&sysinfo);
++        ncpu = sysinfo.dwNumberOfProcessors;
++    }
+ # else
+     ncpu = 0;
+ # endif
+@@ -18268,6 +18296,21 @@ posixmodule_exec(PyObject *m)
+     if (state->st_mode == NULL)
+         return -1;
+ 
++#ifdef MS_WINDOWS
++    HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
++    if (hKernel32) {
++        state->Py_GetActiveProcessorCount = (GetActiveProcessorCountFunc)GetProcAddress(hKernel32, "GetActiveProcessorCount");
++        state->Py_PssCaptureSnapshot = (PssCaptureSnapshotFunc)GetProcAddress(hKernel32, "PssCaptureSnapshot");
++        state->Py_PssQuerySnapshot = (PssQuerySnapshotFunc)GetProcAddress(hKernel32, "PssQuerySnapshot");
++        state->Py_PssFreeSnapshot = (PssFreeSnapshotFunc)GetProcAddress(hKernel32, "PssFreeSnapshot");
++        if (!state->Py_PssCaptureSnapshot || !state->Py_PssQuerySnapshot || !state->Py_PssFreeSnapshot) {
++            state->Py_PssCaptureSnapshot = NULL;
++            state->Py_PssQuerySnapshot = NULL;
++            state->Py_PssFreeSnapshot = NULL;
++        }
++    }
++#endif
++
+     /* suppress "function not used" warnings */
+     {
+     int ignored;
+diff --git a/Modules/socketmodule.c b/Modules/socketmodule.c
+index ea48844d0d5..7db2ab25aa0 100644
+--- a/Modules/socketmodule.c
++++ b/Modules/socketmodule.c
+@@ -5768,15 +5768,29 @@ sock_initobj_impl(PySocketSockObject *self, int family, int type, int proto,
+         }
+ #ifdef MS_WINDOWS
+         Py_BEGIN_ALLOW_THREADS
+-        fd = WSASocketW(family, type, proto,
+-                        NULL, 0,
+-                        WSA_FLAG_OVERLAPPED | WSA_FLAG_NO_HANDLE_INHERIT);
++        if (IsWindows7SP1OrGreater()) {
++            // WSA_FLAG_NO_HANDLE_INHERIT is supported
++            fd = WSASocketW(family, type, proto,
++                NULL, 0,
++                WSA_FLAG_OVERLAPPED | WSA_FLAG_NO_HANDLE_INHERIT);
++        } else {
++            fd = socket(family, type, proto);
++        }
+         Py_END_ALLOW_THREADS
+ 
+         if (fd == INVALID_SOCKET) {
+             set_error();
+             return -1;
+         }
++
++        if (!IsWindows7SP1OrGreater()) {
++            // WSA_FLAG_NO_HANDLE_INHERIT is not supported
++            if (!SetHandleInformation((HANDLE)fd, HANDLE_FLAG_INHERIT, 0)) {
++                closesocket(fd);
++                PyErr_SetFromWindowsErr(0);
++                return -1;
++            }
++        }
+ #else
+         /* UNIX */
+         Py_BEGIN_ALLOW_THREADS
+diff --git a/Modules/timemodule.c b/Modules/timemodule.c
+index 5ab64c8734d..9e66aa45821 100644
+--- a/Modules/timemodule.c
++++ b/Modules/timemodule.c
+@@ -71,9 +71,13 @@ module time
+ 
+ 
+ /* Forward declarations */
+-static int pysleep(PyTime_t timeout);
++static int pysleep(PyObject *self, PyTime_t timeout);
+ 
+ 
++#ifdef MS_WINDOWS
++typedef BOOL(WINAPI *SetWaitableTimerExFunc)(HANDLE hTimer, const LARGE_INTEGER *lpDueTime, LONG lPeriod, PTIMERAPCROUTINE pfnCompletionRoutine, LPVOID lpArgToCompletionRoutine, PREASON_CONTEXT WakeContext, ULONG TolerableDelay);
++#endif
++
+ typedef struct {
+     PyTypeObject *struct_time_type;
+ // gh-115714: Don't use times() on WASI.
+@@ -85,6 +89,9 @@ typedef struct {
+     // clock() frequency in hertz
+     _PyTimeFraction clock_base;
+ #endif
++#ifdef MS_WINDOWS
++    SetWaitableTimerExFunc Py_SetWaitableTimerEx;
++#endif
+ } time_module_state;
+ 
+ static inline time_module_state*
+@@ -405,7 +412,7 @@ time_sleep(PyObject *self, PyObject *timeout_obj)
+                         "sleep length must be non-negative");
+         return NULL;
+     }
+-    if (pysleep(timeout) != 0) {
++    if (pysleep(self, timeout) != 0) {
+         return NULL;
+     }
+     Py_RETURN_NONE;
+@@ -2132,6 +2139,10 @@ time_exec(PyObject *module)
+             CloseHandle(timer);
+         }
+     }
++
++    HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
++    if (hKernel32)
++        state->Py_SetWaitableTimerEx = (SetWaitableTimerExFunc)GetProcAddress(hKernel32, "SetWaitableTimerEx");
+ #endif
+ 
+ // gh-115714: Don't use times() on WASI.
+@@ -2216,7 +2227,7 @@ PyInit_time(void)
+ // On error, raise an exception and return -1.
+ // On success, return 0.
+ static int
+-pysleep(PyTime_t timeout)
++pysleep(PyObject *self, PyTime_t timeout)
+ {
+     assert(timeout >= 0);
+ 
+@@ -2325,12 +2336,29 @@ pysleep(PyTime_t timeout)
+         return -1;
+     }
+ 
+-    if (!SetWaitableTimerEx(timer, &relative_timeout,
+-                            0, // no period; the timer is signaled once
+-                            NULL, NULL, // no completion routine
+-                            NULL,  // no wake context; do not resume from suspend
+-                            0)) // no tolerable delay for timer coalescing
+-    {
++    BOOL result;
++    SetWaitableTimerExFunc Py_SetWaitableTimerEx = get_time_state(self)->Py_SetWaitableTimerEx;
++    if (Py_SetWaitableTimerEx) {
++        result = Py_SetWaitableTimerEx(
++            timer, &relative_timeout,
++            0, // no period; the timer is signaled once
++            NULL, NULL, // no completion routine
++            NULL,  // no wake context; do not resume from suspend
++            0 // no tolerable delay for timer coalescing
++        );
++    } else {
++        result = SetWaitableTimer(
++            timer, &relative_timeout,
++            // period: the timer is signaled once
++            0,
++            // no completion routine
++            NULL, NULL,
++            // Don't restore a system in suspended power
++            // conservation mode when the timer is signaled.
++            FALSE
++        );
++    }
++    if (!result) {
+         PyErr_SetFromWindowsErr(0);
+         goto error;
+     }
+diff --git a/Python/ceval.c b/Python/ceval.c
+index 377b4644edd..41871e7fa4d 100644
+--- a/Python/ceval.c
++++ b/Python/ceval.c
+@@ -33,6 +33,7 @@
+ #include "pycore_pyerrors.h"      // _PyErr_GetRaisedException()
+ #include "pycore_pystate.h"       // _PyInterpreterState_GET()
+ #include "pycore_range.h"         // _PyRangeIterObject
++#include "pycore_runtime.h"       // _PyRuntime
+ #include "pycore_setobject.h"     // _PySet_Update()
+ #include "pycore_sliceobject.h"   // _PyBuildSlice_ConsumeRefs
+ #include "pycore_sysmodule.h"     // _PySys_GetOptionalAttrString()
+@@ -443,7 +444,7 @@ hardware_stack_limits(uintptr_t *base, uintptr_t *top, uintptr_t sp)
+ {
+ #ifdef WIN32
+     ULONG_PTR low, high;
+-    GetCurrentThreadStackLimits(&low, &high);
++    _PyRuntime.Py_GetCurrentThreadStackLimits(&low, &high);
+     *top = (uintptr_t)high;
+     ULONG guarantee = 0;
+     SetThreadStackGuarantee(&guarantee);
+diff --git a/Python/fileutils.c b/Python/fileutils.c
+index ed7141c8220..11a461b23b5 100644
+--- a/Python/fileutils.c
++++ b/Python/fileutils.c
+@@ -1489,11 +1489,17 @@ set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
+     else
+         flags = 0;
+ 
+-    if (!SetHandleInformation(handle, HANDLE_FLAG_INHERIT, flags)) {
++    /* This check can be removed once support for Windows 7 ends. */
++#define CONSOLE_PSEUDOHANDLE(handle) (((ULONG_PTR)(handle) & 0x3) == 0x3 && \
++        GetFileType(handle) == FILE_TYPE_CHAR)
++
++    if (!CONSOLE_PSEUDOHANDLE(handle) &&
++        !SetHandleInformation(handle, HANDLE_FLAG_INHERIT, flags)) {
+         if (raise)
+             PyErr_SetFromWindowsErr(0);
+         return -1;
+     }
++#undef CONSOLE_PSEUDOHANDLE
+     return 0;
+ 
+ #else
+diff --git a/Python/pystate.c b/Python/pystate.c
+index 06672ceb214..16419616bec 100644
+--- a/Python/pystate.c
++++ b/Python/pystate.c
+@@ -436,6 +436,21 @@ init_runtime(_PyRuntimeState *runtime,
+     runtime->_initialized = 1;
+ }
+ 
++#ifdef MS_WINDOWS
++#include <winternl.h>
++#include <stdlib.h>
++
++static VOID WINAPI Py_GetCurrentThreadStackLimits_impl(PULONG_PTR LowLimit, PULONG_PTR HighLimit)
++{
++    // inspired by Wine's implementation of GetCurrentThreadStackLimits()
++    PTEB teb = NtCurrentTeb();
++    PVOID low;
++    memcpy(&low, teb->Reserved3 + _countof(teb->Reserved3) - sizeof(PVOID), sizeof(PVOID));
++    *LowLimit = (ULONG_PTR)low;
++    *HighLimit = (ULONG_PTR)teb->Reserved1[1];
++}
++#endif
++
+ PyStatus
+ _PyRuntimeState_Init(_PyRuntimeState *runtime)
+ {
+@@ -463,6 +478,16 @@ _PyRuntimeState_Init(_PyRuntimeState *runtime)
+         return status;
+     }
+ 
++#ifdef MS_WINDOWS
++    HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
++    GetCurrentThreadStackLimitsFunc func;
++    if (hKernel32 && (func = (GetCurrentThreadStackLimitsFunc)GetProcAddress(hKernel32, "GetCurrentThreadStackLimits")) != NULL) {
++        runtime->Py_GetCurrentThreadStackLimits = func;
++    } else {
++        runtime->Py_GetCurrentThreadStackLimits = Py_GetCurrentThreadStackLimits_impl;
++    }
++#endif
++
+     if (gilstate_tss_init(runtime) != 0) {
+         _PyRuntimeState_Fini(runtime);
+         return _PyStatus_NO_MEMORY();
+diff --git a/Python/pytime.c b/Python/pytime.c
+index 67cf6437264..468b80d9a21 100644
+--- a/Python/pytime.c
++++ b/Python/pytime.c
+@@ -10,6 +10,7 @@
+ #endif
+ #ifdef MS_WINDOWS
+ #  include <winsock2.h>           // struct timeval
++#  include <windows.h>
+ #endif
+ 
+ #if defined(__APPLE__)
+@@ -910,7 +911,12 @@ py_get_system_clock(PyTime_t *tp, _Py_clock_info_t *info, int raise_exc)
+     FILETIME system_time;
+     ULARGE_INTEGER large;
+ 
+-    GetSystemTimePreciseAsFileTime(&system_time);
++    GetSystemTimePreciseAsFileTimeFunc Py_GetSystemTimePreciseAsFileTime = _PyRuntime.time.Py_GetSystemTimePreciseAsFileTime;
++    if (Py_GetSystemTimePreciseAsFileTime) {
++        Py_GetSystemTimePreciseAsFileTime(&system_time);
++    } else {
++        GetSystemTimeAsFileTime(&system_time);
++    }
+     large.u.LowPart = system_time.dwLowDateTime;
+     large.u.HighPart = system_time.dwHighDateTime;
+     /* 11,644,473,600,000,000,000: number of nanoseconds between
+@@ -919,11 +925,25 @@ py_get_system_clock(PyTime_t *tp, _Py_clock_info_t *info, int raise_exc)
+     PyTime_t ns = (large.QuadPart - 116444736000000000) * 100;
+     *tp = ns;
+     if (info) {
+-        // GetSystemTimePreciseAsFileTime() is implemented using
+-        // QueryPerformanceCounter() internally.
+-        info->implementation = "GetSystemTimePreciseAsFileTime()";
++        if (Py_GetSystemTimePreciseAsFileTime) {
++            // GetSystemTimePreciseAsFileTime() is implemented using
++            // QueryPerformanceCounter() internally.
++            info->implementation = "GetSystemTimePreciseAsFileTime()";
++            info->resolution = _PyTimeFraction_Resolution(&_PyRuntime.time.base);
++        } else {
++            DWORD timeAdjustment, timeIncrement;
++            BOOL isTimeAdjustmentDisabled, ok;
++
++            info->implementation = "GetSystemTimeAsFileTime()";
++            ok = GetSystemTimeAdjustment(&timeAdjustment, &timeIncrement,
++                                         &isTimeAdjustmentDisabled);
++            if (!ok) {
++                PyErr_SetFromWindowsErr(0);
++                return -1;
++            }
++            info->resolution = timeIncrement * 1e-7;
++        }
+         info->monotonic = 0;
+-        info->resolution = _PyTimeFraction_Resolution(&_PyRuntime.time.base);
+         info->adjustable = 1;
+     }
+ 
+@@ -1124,6 +1144,10 @@ PyStatus
+ _PyTime_Init(struct _Py_time_runtime_state *state)
+ {
+ #ifdef MS_WINDOWS
++    HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
++    if (hKernel32) {
++        state->Py_GetSystemTimePreciseAsFileTime = (GetSystemTimePreciseAsFileTimeFunc)GetProcAddress(hKernel32, "GetSystemTimePreciseAsFileTime");
++    }
+     return py_win_perf_counter_frequency(&state->base);
+ #elif defined(__APPLE__)
+     return py_mach_timebase_info(&state->base);
+-- 
+2.54.0
+
