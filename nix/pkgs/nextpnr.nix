@@ -87,6 +87,8 @@ stdenv.mkDerivation {
     (lib.cmakeFeature "TRELLIS_LIBDIR" "${buildPackages.glasgowPkgs.prjtrellis}/lib/trellis")
 
     (lib.cmakeFeature "BBA_IMPORT" "${bba}/lib/cmake/bbasm.cmake")
+
+    (lib.cmakeFeature "CURRENT_GIT_VERSION" "${builtins.substring 0 7 src.rev}")
   ];
 
   enableParallelBuilding = true;
