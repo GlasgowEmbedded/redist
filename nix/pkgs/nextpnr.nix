@@ -16,7 +16,7 @@
 }:
 
 let
-  version = "0.11";
+  version = "0.10";
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "nextpnr";
@@ -88,7 +88,7 @@ stdenv.mkDerivation {
 
     (lib.cmakeFeature "BBA_IMPORT" "${bba}/lib/cmake/bbasm.cmake")
 
-    (lib.cmakeFeature "CURRENT_GIT_VERSION" "${builtins.substring 0 7 src.rev}")
+    (lib.cmakeFeature "CURRENT_GIT_VERSION" "${version}-9999-${builtins.substring 0 7 src.rev}")
   ];
 
   enableParallelBuilding = true;
