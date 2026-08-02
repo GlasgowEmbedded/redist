@@ -22,6 +22,10 @@ stdenv.mkDerivation {
 
     cp -r ${glasgowPkgs.python}/lib/python3.14/ $out/lib/
 
+    # Remove Python tests (~150 MB)
+    chmod -R +w $out/lib/python3.14/
+    rm -r $out/lib/python3.14/test/
+
     # Grab the remaining Python dependencies.
     cp -n ${glasgowPkgs.api-ms-win-core-path}/bin/* $out/bin/
     ${lib.foldl (
