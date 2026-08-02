@@ -1,40 +1,20 @@
 {
-  buildPackages,
   callPackage,
-  fetchPypi,
   glasgowPkgs,
-  stdenvNoCC,
+  runCommand,
 }:
 
 let
   glasgow-sources = callPackage ./sources.nix { };
 
-  buildPythonPackage =
-    sources:
-    stdenvNoCC.mkDerivation {
-      inherit (sources) pname version;
-
-      src = fetchPypi sources;
-
-      nativeBuildInputs = [
-        (buildPackages.python3.withPackages (ps: with ps; [
-          setuptools
-        ]))
-      ];
-
-      buildPhase = ''
-        # We only really need to build MarkupSafe, which can be built without the native component.
-        python setup.py bdist_wheel
-      '';
-
-      installPhase = ''
-        mkdir $out
-        cp -r dist/*.whl $out/
-      '';
-    };
-
-  wheels = glasgowPkgs.render "${glasgow-sources}/software/pdm.dist.lock" buildPythonPackage;
+  wheels = glasgowPkgs.render { filename = "${glasgow-sources}/software/pdm.dist.lock"; };
 in
-{
-  pkgs = wheels;
-}
+runCommand "wheels" { } ''
+  mkdir $out
+
+  # Glasgow.
+  cp ${glasgowPkgs.glasgow}/*.whl $out
+
+  # Glasgow dependencies.
+  cp ${wheels}/*.whl $out
+''

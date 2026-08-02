@@ -32,6 +32,7 @@
 
                 render = self.callPackage ./nix/lib/render.nix { };
                 glasgow = self.callPackage ./nix/pkgs/glasgow { };
+                manual = self.callPackage ./nix/pkgs/glasgow/manual.nix { };
                 wheels = self.callPackage ./nix/pkgs/glasgow/wheels.nix { };
 
                 icestorm = self.callPackage ./nix/pkgs/icestorm.nix { };
@@ -60,6 +61,8 @@
 
           glasgow-pkgs-win32 = win32Pkgs.glasgowPkgs;
           glasgow-pkgs-win64 = win64Pkgs.glasgowPkgs;
+
+          inherit pkgs;
         };
       }
     );

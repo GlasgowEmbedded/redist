@@ -1,4 +1,5 @@
 {
+  buildPackages,
   glasgowPkgs,
   lib,
   stdenv,
@@ -11,7 +12,7 @@ stdenv.mkDerivation {
   phases = [ "installPhase" ];
 
   installPhase = ''
-    mkdir -p $out/{bin,lib,share,wheels}
+    mkdir -p $out/{bin,doc,lib,share}
 
     # libusb.
     cp ${glasgowPkgs.libusb}/bin/* $out/bin/
@@ -56,21 +57,10 @@ stdenv.mkDerivation {
     cp ${glasgowPkgs.yosys}/bin/yosys-abc.exe $out/bin/
     cp -r ${glasgowPkgs.yosys}/share/yosys/ $out/share/
 
-    # Glasgow.
-    cp ${glasgowPkgs.glasgow}/*.whl $out/wheels/
+    # Glasgow manual. Copied from buildPackages since it's static.
+    cp -r ${buildPackages.glasgowPkgs.manual} $out/doc/manual/
 
-    # Glasgow dependencies.
-    ${lib.foldlAttrs (
-      acc: _: drv:
-      ''
-        if [[ -f ${drv} ]]; then
-          # Derivation built via fetchPypi
-          cp -n ${drv} $out/wheels/${drv.name}
-        else
-          # Derivation built via buildPythonPackage'
-          cp -n ${drv}/*.whl $out/wheels/
-        fi
-      '' + acc
-    ) "" glasgowPkgs.wheels.pkgs}
+    # Glasgow wheels.
+    cp -r ${glasgowPkgs.wheels} $out/wheels/
   '';
 }

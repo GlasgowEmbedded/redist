@@ -14,10 +14,12 @@ stdenvNoCC.mkDerivation {
   inherit src;
 
   nativeBuildInputs = [
-    (buildPackages.python3.withPackages (ps: with ps; [
-      pdm-backend
-      pip
-    ]))
+    (buildPackages.python3.withPackages (
+      ps: with ps; [
+        pdm-backend
+        pip
+      ]
+    ))
   ];
 
   buildPhase = ''
