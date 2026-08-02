@@ -1,7 +1,7 @@
 {
   callPackage,
   glasgowPkgs,
-  python313,
+  python3,
   stdenvNoCC,
 }:
 
@@ -10,7 +10,6 @@ let
 
   wheels = glasgowPkgs.render {
     filename = "${src}/docs/manual/pdm.dist.lock";
-    python = python313;
     hasCC = true;
   };
 in
@@ -22,7 +21,7 @@ stdenvNoCC.mkDerivation {
   sourceRoot = "${src.name}/docs/manual";
 
   nativeBuildInputs = [
-    python313
+    python3
   ];
 
   buildPhase = ''
