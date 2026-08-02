@@ -36,7 +36,7 @@ stdenvNoCC.mkDerivation {
     export INTERSPHINX_PYTHON="${./intersphinx/objects.inv}"
 
     for lang in en zh; do
-      DOCS_LANGUAGE=$lang sphinx-build src $out/build-$lang -b html
+      DOCS_LANGUAGE=$lang sphinx-build src $out/$lang -b html
     done
   '';
 }
