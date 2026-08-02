@@ -82,7 +82,6 @@ stdenv.mkDerivation {
     (lib.cmakeFeature "ECP5_DEVICES" "25k")
     (lib.cmakeFeature "ICE40_DEVICES" "8k")
 
-
     (lib.cmakeFeature "ICESTORM_INSTALL_PREFIX" glasgowPkgs.icestorm.outPath)
     (lib.cmakeFeature "TRELLIS_INSTALL_PREFIX" buildPackages.glasgowPkgs.prjtrellis.outPath)
     (lib.cmakeFeature "TRELLIS_LIBDIR" "${buildPackages.glasgowPkgs.prjtrellis}/lib/trellis")

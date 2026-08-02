@@ -30,6 +30,10 @@
                 libusb = self.callPackage ./nix/pkgs/libusb.nix { };
                 python = self.callPackage ./nix/pkgs/python { };
 
+                render = self.callPackage ./nix/lib/render.nix { };
+                glasgow = self.callPackage ./nix/pkgs/glasgow { };
+                wheels = self.callPackage ./nix/pkgs/glasgow/wheels.nix { };
+
                 icestorm = self.callPackage ./nix/pkgs/icestorm.nix { };
                 nextpnr = self.callPackage ./nix/pkgs/nextpnr.nix { };
                 prjtrellis = self.callPackage ./nix/pkgs/prjtrellis.nix { };
