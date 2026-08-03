@@ -44,8 +44,8 @@ runCommand "build-installer"
     </fontconfig>
     EOF
 
+    # Required to properly display output from wine in the nix build.
     run_wine() {
-      echo "$@"
       wine "$@" 2>&1 | tr '\r\n' '\n'
     }
 
