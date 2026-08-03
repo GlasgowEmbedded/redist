@@ -1,0 +1,71 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <!-- If the shortcuts are broken in some weird way, regenerate the GUID below. -->
+        <Component
+            Id="AppShortcuts"
+            Guid="01d76d67-cef2-449b-83f5-ef5c06f3f9a0"
+            Directory="INSTALLFOLDER"
+        >
+            <!-- Sets up PATH so we don't have to update it globally -->
+            <File
+                Source="res\vars.bat"
+            />
+
+            <!-- Desktop shortcut -->
+            <Shortcut
+                Id="DesktopAppShortcut"
+                Name="!(loc.PackageName)"
+                Description="!(loc.AppShortcutDescription)"
+                Target="[SystemFolder]cmd.exe"
+                Arguments="/k &quot;[INSTALLFOLDER]vars.bat&quot;"
+                WorkingDirectory="INSTALLFOLDER"
+                Icon="AppIcon"
+                IconIndex="0"
+                Directory="AppDesktopFolder"
+            />
+
+            <!-- Start menu shortcuts -->
+            <Shortcut
+                Id="StartMenuAppShortcut"
+                Name="!(loc.AppShortcutName)"
+                Description="!(loc.AppShortcutDescription)"
+                Target="[SystemFolder]cmd.exe"
+                Arguments="/k &quot;[INSTALLFOLDER]vars.bat&quot;"
+                WorkingDirectory="INSTALLFOLDER"
+                Icon="AppIcon"
+                IconIndex="0"
+                Directory="AppProgramsFolder"
+            />
+            <Shortcut
+                Id="StartMenuManualShortcut"
+                Name="!(loc.ManualShortcutName)"
+                Description="!(loc.ManualShortcutDescription)"
+                Target="[INSTALLFOLDER]doc\manual\!(loc.ManualLocale)\intro.html"
+                Directory="AppProgramsFolder"
+            />
+            <Shortcut
+                Id="StartMenuUninstallShortcut"
+                Name="!(loc.UninstallShortcutName)"
+                Description="!(loc.UninstallShortcutDescription)"
+                Target="[SystemFolder]msiexec.exe"
+                Arguments="/x [ProductCode]"
+                Directory="AppProgramsFolder"
+            />
+            <RemoveFolder
+                Id="RemoveAppProgramsFolder"
+                Directory="AppProgramsFolder"
+                On="uninstall"
+            />
+
+            <!-- Serves as a key path for the component and has no other purpose -->
+            <RegistryValue
+                Root="HKLM"
+                Key="Software\GlasgowInterfaceExplorer"
+                Name="Installed"
+                Type="integer"
+                Value="1"
+                KeyPath="yes"
+            />
+        </Component>
+    </Fragment>
+</Wix>

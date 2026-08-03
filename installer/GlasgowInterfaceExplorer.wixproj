@@ -1,0 +1,23 @@
+<Project Sdk="WixToolset.Sdk/7.0.0">
+    <PropertyGroup>
+        <AcceptEula>wix7</AcceptEula>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0"/>
+        <PackageReference Include="WixToolset.Util.wixext" Version="7.0.0"/>
+    </ItemGroup>
+
+    <PropertyGroup Condition="'$(Platform)' == 'x64'">
+        <InstallerPlatform>x64</InstallerPlatform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Platform)' == 'x86'">
+        <InstallerPlatform>x86</InstallerPlatform>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <!-- Validation crashes on Wine for some reason -->
+        <SuppressValidation>true</SuppressValidation>
+        <Cultures>en-US</Cultures>
+    </PropertyGroup>
+</Project>

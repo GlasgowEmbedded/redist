@@ -1,0 +1,55 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <!--
+            Both install and cleanup have to be completely non-interactive, as pip will be runing
+            under LocalSystem and have no access to the desktop. This command is made to depend
+            on system configuration (and network) as little as pip allows us to.
+        -->
+        <?define PipCommonArgs = "--isolated --no-input --no-cache-dir -r requirements.txt" ?>
+        <?define PipInstallArgs = "-m pip install --no-index --no-user $(var.PipCommonArgs)" ?>
+        <?define PipUninstallArgs = "-m pip uninstall -y $(var.PipCommonArgs)" ?>
+
+        <!--
+            Unfortunately we can't factor out more parts of the command line because
+            the preprocessor doesn't seem to have a way to quote a quote. Infuriating.
+            Note that the `PYTHONNOUSERSITE=1` behavior seems to be undocumented.
+        -->
+        <SetProperty
+            Id="InstallWheels"
+            Value='"[SystemFolder]cmd.exe" /c "cd "[INSTALLFOLDER]dist" &amp;&amp; set PYTHONNOUSERSITE=1 &amp;&amp; "[INSTALLFOLDER]bin\python3.exe" $(var.PipInstallArgs)"'
+            Before="InstallWheels"
+            Sequence="execute"
+        />
+        <SetProperty
+            Id="UninstallWheels"
+            Value='"[SystemFolder]cmd.exe" /c "cd "[INSTALLFOLDER]dist" &amp;&amp; set PYTHONNOUSERSITE=1 &amp;&amp; "[INSTALLFOLDER]bin\python3.exe" $(var.PipUninstallArgs)"'
+            Before="UninstallWheels"
+            Sequence="execute"
+        />
+
+        <!--
+            See https://docs.firegiant.com/wix/tools/wixext/quietexec/ for details.
+            Note that for `Execute="deferred"` custom actions, the command line is passed in
+            the property with the same name, which are defined above. This is because the action
+            is executed in a subprocess launched with Installer's privileges while the .msi is
+            running with the local user (or administrator) privileges, and they communicate via
+            the MSI database.
+        -->
+        <?foreach ActionId in InstallWheels;UninstallWheels ?>
+            <CustomAction
+                Id="$(ActionId)"
+                BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)"
+                DllEntry="WixQuietExec"
+                Execute="deferred"
+                Impersonate="no"
+                Return="check"
+            />
+        <?endforeach?>
+
+        <Property Id="RunPip" Value="1"/>
+        <InstallExecuteSequence>
+            <Custom Action="InstallWheels" Before="InstallFinalize" Condition="NOT Installed AND (RunPip = 1)"/>
+            <Custom Action="UninstallWheels" After="InstallInitialize" Condition="Installed AND (RunPip = 1)"/>
+        </InstallExecuteSequence>
+    </Fragment>
+</Wix>

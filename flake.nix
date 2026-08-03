@@ -48,8 +48,19 @@
         win32Pkgs = pkgs.callPackage ./nix/cross/win32.nix {
           yosys = yosys.packages.${system}.yosys-win32;
         };
+
         win64Pkgs = pkgs.callPackage ./nix/cross/win64.nix {
           yosys = yosys.packages.${system}.yosys-win64;
+        };
+
+        glasgow-installer-win32 = pkgs.callPackage ./nix/pkgs/installer {
+          glasgow-arch = "x86";
+          inherit (win32Pkgs.glasgowPkgs) glasgow-dist;
+        };
+
+        glasgow-installer-win64 = pkgs.callPackage ./nix/pkgs/installer {
+          glasgow-arch = "x64";
+          inherit (win64Pkgs.glasgowPkgs) glasgow-dist;
         };
       in
       {
@@ -62,7 +73,7 @@
           glasgow-pkgs-win32 = win32Pkgs.glasgowPkgs;
           glasgow-pkgs-win64 = win64Pkgs.glasgowPkgs;
 
-          inherit pkgs;
+          inherit glasgow-installer-win32 glasgow-installer-win64 pkgs;
         };
       }
     );
