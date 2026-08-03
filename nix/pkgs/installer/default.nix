@@ -56,9 +56,9 @@ runCommand "build-installer"
     run_wine ${dotnet-sdk}/dotnet.exe nuget remove source nuget.org
     run_wine ${dotnet-sdk}/dotnet.exe nuget add source 'C:\pkgs'
 
-    cp -r ${../../../installer}/ installer/
-    chmod -R +w installer/
-    cd installer/
+    cp -r ${../../../wix}/ wix/
+    chmod -R +w wix/
+    cd wix/
 
     # Install DLLs for wine.
     cp tools/*.dll $HOME/.wine/drive_c/windows/system32/
