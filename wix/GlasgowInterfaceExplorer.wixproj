@@ -18,6 +18,6 @@
     <PropertyGroup>
         <!-- Validation crashes on Wine for some reason -->
         <SuppressValidation>true</SuppressValidation>
-        <Cultures>en-US</Cultures>
+        <Cultures>en-US;zh-CN</Cultures>
     </PropertyGroup>
 </Project>

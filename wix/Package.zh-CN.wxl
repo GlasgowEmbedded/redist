@@ -1,4 +1,4 @@
-<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="en-US">
+<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="zh-CN">
    <String Id="x64VersionRequired" Value="You must install the 64-bit version of this product on 64-bit Windows."/>
    <String Id="x86VersionRequired" Value="You must install the 32-bit version of this product on 32-bit Windows."/>
    <String Id="OperatingSystemTooOld" Value="This product requires at least Windows 7 SP1."/>
@@ -7,7 +7,7 @@
    <String Id="ProductName" Value="Glasgow Interface Explorer"/>
    <String Id="PackageName" Value="Glasgow Interface Explorer Toolchain"/>
 
-   <String Id="WelcomeDlgDescription" Value="The Setup Wizard will install [ProductName] [FullVersion] on your computer. Click Next to continue or Cancel to exit the Setup Wizard." />
+   <String Id="WelcomeDlgDescription" Value="安装向导将在计算机上安装 [ProductName] [FullVersion]。单击“下一步”继续，或单击“取消”退出安装向导。" />
 
    <String Id="AppShortcutName" Value="Launch terminal"/>
    <String Id="AppShortcutDescription" Value="Launch a terminal with the Glasgow Interface Explorer tools available."/>
@@ -17,7 +17,7 @@
 
    <String Id="ManualShortcutName" Value="Open manual"/>
    <String Id="ManualShortcutDescription" Value="Open the Glasgow Interface Explorer manual in the default web browser."/>
-   <String Id="ManualLocale" Value="en"/>
+   <String Id="ManualLocale" Value="zh"/>
 
    <String Id="UninstallShortcutName" Value="Uninstall"/>
    <String Id="UninstallShortcutDescription" Value="Remove the Glasgow Interface Explorer toolchain from this computer."/>
