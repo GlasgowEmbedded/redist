@@ -3,6 +3,6 @@
 fetchFromGitHub {
   owner = "GlasgowEmbedded";
   repo = "glasgow";
-  rev = "51787933fd4a0bb4682b4d54230cf121d7667214";
-  hash = "sha256-Ro0sNMIEtk1LjPJi1RFtVyqGc2a/8LLT9eqS+wImm9g=";
+  rev = "aab708866009f03ec0b417f60a7de7ca9d772e95";
+  hash = "sha256-0ApCGkpofgRCCbO93xiN/zlDdma3l+iS3ecWN+iMJ5k=";
 }
