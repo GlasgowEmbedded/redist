@@ -10,12 +10,13 @@
         redistributable, but nothing in MSI enforces it to be unique.
     -->
     <?define UpgradeCode = "92081f48-e98d-427c-880d-0d560b8fb9c0" ?>
-    <?define Version = "1.0.0" ?>
+    <?define Version = "0.1" ?>
+    <?define GitShort = "$(env.GIT_SHORT)" ?>
 
     <Package
         UpgradeCode="$(var.UpgradeCode)"
-        Manufacturer="Glasgow Embedded Project"
-        Name="Glasgow Interface Explorer"
+        Manufacturer="!(loc.Manufacturer)"
+        Name="!(loc.PackageName)"
         Version="$(var.Version)"
     >
         <!-- Embed cabinet file and compress it (in Release builds only) -->
@@ -25,12 +26,13 @@
             <MediaTemplate EmbedCab="no" CompressionLevel="none"/>
         <?endif?>
 
-        <!-- MSI bitness must match host -->
+        <!-- MSI bitness must match host, unless `msiexec /i glasgow.msi ForceInstall=1` -->
+        <Property Id="ForceInstall" Value="0"/>
         <?if "$(var.Platform)" = "x64" ?>
-            <Launch Condition="VersionNT64" Message="!(loc.x86VersionRequired)"/>
+            <Launch Condition="VersionNT64 OR ForceInstall" Message="!(loc.x86VersionRequired)"/>
         <?endif?>
         <?if "$(var.Platform)" = "x86" ?>
-            <Launch Condition="NOT VersionNT64" Message="!(loc.x64VersionRequired)"/>
+            <Launch Condition="NOT VersionNT64 OR ForceInstall" Message="!(loc.x64VersionRequired)"/>
         <?endif?>
 
         <!-- Windows 7 SP1 or later -->
@@ -42,13 +44,14 @@
         <!-- Branding -->
         <Icon Id="AppIcon" SourceFile="res\glasgow.ico"/>
         <Property Id="ARPPRODUCTICON" Value="AppIcon"/>
+        <Property Id="FullVersion" Value="v$(var.Version)+g$(var.GitShort)"/>
 
         <!-- Components -->
         <ComponentGroup Id="AppShortcuts">
             <ComponentRef Id="AppShortcuts"/>
         </ComponentGroup>
 
-        <Feature Id="Main">
+        <Feature Id="MainFeature">
             <ComponentGroupRef Id="InstallFiles"/>
             <ComponentGroupRef Id="AppShortcuts"/>
         </Feature>
@@ -58,5 +61,7 @@
 
         <!-- UI -->
         <ui:WixUI Id="WixUI_InstallDir_Custom" InstallDirectory="INSTALLFOLDER"/>
+        <WixVariable Id="WixUIDialogBmp" Value="res/UIDialog.bmp"/>
+        <WixVariable Id="WixUIBannerBmp" Value="res/UIBanner.bmp"/>
     </Package>
 </Wix>

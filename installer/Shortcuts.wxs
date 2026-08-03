@@ -37,6 +37,15 @@
                 Directory="AppProgramsFolder"
             />
             <Shortcut
+                Id="StartMenuPythonIDLEShortcut"
+                Name="!(loc.PythonIDLEShortcutName)"
+                Description="!(loc.PythonIDLEShortcutDescription)"
+                Target="[INSTALLFOLDER]bin\python3.exe"
+                Arguments="-m idlelib.pyshell"
+                WorkingDirectory="INSTALLFOLDER"
+                Directory="AppProgramsFolder"
+            />
+            <Shortcut
                 Id="StartMenuManualShortcut"
                 Name="!(loc.ManualShortcutName)"
                 Description="!(loc.ManualShortcutDescription)"

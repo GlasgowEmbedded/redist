@@ -3,6 +3,7 @@
 {
   callPackage,
   fetchzip,
+  glasgowPkgs,
   python3,
   runCommand,
   wine64,
@@ -31,6 +32,7 @@ runCommand "build-installer"
   ''
     export DOTNET_CLI_TELEMETRY_OPTOUT=1
     export FONTCONFIG_FILE=$PWD/fc.conf
+    export GIT_SHORT=${builtins.substring 0 7 glasgowPkgs.glasgow.src.rev}
     export HOME=$TMP
     export WINEDEBUG=-all
 

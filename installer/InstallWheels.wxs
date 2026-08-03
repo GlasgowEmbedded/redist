@@ -6,7 +6,7 @@
             on system configuration (and network) as little as pip allows us to.
         -->
         <?define PipCommonArgs = "--isolated --no-input --no-cache-dir -r requirements.txt" ?>
-        <?define PipInstallArgs = "-m pip install --no-index --no-user $(var.PipCommonArgs)" ?>
+        <?define PipInstallArgs = "-m pip install --no-index --no-user --force-reinstall $(var.PipCommonArgs)" ?>
         <?define PipUninstallArgs = "-m pip uninstall -y $(var.PipCommonArgs)" ?>
 
         <!--
@@ -46,10 +46,24 @@
             />
         <?endforeach?>
 
+        <!-- Allow running as `msiexec /x glasogw.msi RunPip=0` to skip the pip actions -->
         <Property Id="RunPip" Value="1"/>
         <InstallExecuteSequence>
-            <Custom Action="InstallWheels" Before="InstallFinalize" Condition="NOT Installed AND (RunPip = 1)"/>
-            <Custom Action="UninstallWheels" After="InstallInitialize" Condition="Installed AND (RunPip = 1)"/>
+            <Custom
+                Action="InstallWheels"
+                Before="InstallFinalize"
+                Condition="(NOT Installed OR REINSTALL) AND (RunPip = 1)"
+            />
+            <Custom
+                Action="UninstallWheels"
+                After="InstallInitialize"
+                Condition="(Installed AND NOT REINSTALL) AND (RunPip = 1)"
+            />
         </InstallExecuteSequence>
+
+        <UI>
+            <ProgressText Action="InstallWheels" Message="!(loc.InstallingWheels)"/>
+            <ProgressText Action="UninstallWheels" Message="!(loc.UninstallingWheels)"/>
+        </UI>
     </Fragment>
 </Wix>

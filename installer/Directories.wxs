@@ -1,13 +1,13 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
     <Fragment>
         <StandardDirectory Id="ProgramFiles6432Folder">
-            <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)" />
+            <Directory Id="INSTALLFOLDER" Name="!(loc.ProductName)" />
         </StandardDirectory>
         <StandardDirectory Id="DesktopFolder">
             <Directory Id="AppDesktopFolder"/>
         </StandardDirectory>
         <StandardDirectory Id="ProgramMenuFolder">
-            <Directory Id="AppProgramsFolder" Name="!(bind.Property.ProductName)" />
+            <Directory Id="AppProgramsFolder" Name="!(loc.ProductName)" />
         </StandardDirectory>
     </Fragment>
 </Wix>

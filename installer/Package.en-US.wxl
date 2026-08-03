@@ -4,15 +4,24 @@
    <String Id="OperatingSystemTooOld" Value="This product requires at least Windows 7 SP1."/>
 
    <String Id="Manufacturer" Value="Glasgow Embedded Project"/>
-   <String Id="PackageName" Value="Glasgow Interface Explorer"/>
+   <String Id="ProductName" Value="Glasgow Interface Explorer"/>
+   <String Id="PackageName" Value="Glasgow Interface Explorer Toolchain"/>
+
+   <String Id="WelcomeDlgDescription" Overridable="yes" Value="The Setup Wizard will install [ProductName] [FullVersion] on your computer. Click Next to continue or Cancel to exit the Setup Wizard." />
 
    <String Id="AppShortcutName" Value="Launch terminal"/>
-   <String Id="AppShortcutDescription" Value="Launch a terminal with the Glasgow Interface Explorer CLI available."/>
+   <String Id="AppShortcutDescription" Value="Launch a terminal with the Glasgow Interface Explorer tools available."/>
+
+   <String Id="PythonIDLEShortcutName" Value="IDLE Shell"/>
+   <String Id="PythonIDLEShortcutDescription" Value="Launch IDLE, Python's Integrated Development and Learning Environment."/>
 
    <String Id="ManualShortcutName" Value="Open manual"/>
    <String Id="ManualShortcutDescription" Value="Open the Glasgow Interface Explorer manual in the default web browser."/>
    <String Id="ManualLocale" Value="en"/>
 
    <String Id="UninstallShortcutName" Value="Uninstall"/>
-   <String Id="UninstallShortcutDescription" Value="Remove the Glasgow Interface Explorer tools from this computer."/>
+   <String Id="UninstallShortcutDescription" Value="Remove the Glasgow Interface Explorer toolchain from this computer."/>
+
+   <String Id="InstallingWheels" Value="Installing Python packages"/>
+   <String Id="UninstallingWheels" Value="Uninstalling Python packages"/>
 </WixLocalization>
