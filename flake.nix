@@ -39,6 +39,8 @@
                 nextpnr = self.callPackage ./nix/pkgs/nextpnr.nix { };
                 prjtrellis = self.callPackage ./nix/pkgs/prjtrellis.nix { };
 
+                celt = self.callPackage ./nix/pkgs/celt.nix { };
+
                 glasgow-dist = self.callPackage ./nix/pkgs/glasgow-dist.nix { };
               });
             })
@@ -56,11 +58,13 @@
         glasgow-installer-win32 = pkgs.callPackage ./nix/pkgs/installer {
           glasgow-arch = "x86";
           inherit (win32Pkgs.glasgowPkgs) glasgow-dist;
+          inherit (win64Pkgs.glasgowPkgs) celt;
         };
 
         glasgow-installer-win64 = pkgs.callPackage ./nix/pkgs/installer {
           glasgow-arch = "x64";
           inherit (win64Pkgs.glasgowPkgs) glasgow-dist;
+          inherit (win64Pkgs.glasgowPkgs) celt;
         };
       in
       {

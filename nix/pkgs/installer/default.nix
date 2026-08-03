@@ -2,6 +2,7 @@
 
 {
   callPackage,
+  celt,
   fetchzip,
   glasgowPkgs,
   python3,
@@ -72,5 +73,9 @@ runCommand "build-installer"
     python tools/dir2wxs.py -dir src -wxs InstallFiles.wxs
     run_wine ${dotnet-sdk}/dotnet.exe build -p:Platform=${glasgow-arch} -p:Configuration=${glasgow-type}
 
-    cp -r bin/${glasgow-arch}/${glasgow-type}/ $out
+    # Merge MSIs.
+    run_wine ${celt}/bin/celt.exe bin/${glasgow-arch}/${glasgow-type}/{en-US,zh-CN}/GlasgowInterfaceExplorer.msi
+
+    # Deploy final artefacts.
+    cp -r bin/${glasgow-arch}/${glasgow-type}/en-US/ $out
   ''
