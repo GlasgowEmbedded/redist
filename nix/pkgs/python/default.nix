@@ -50,7 +50,6 @@ stdenv.mkDerivation {
   configureFlags = [
     "--with-build-python=${buildPackages.python3}/bin/python"
     "--enable-shared"
-    "--enable-optimizations"
   ];
 
   enableParallelBuilding = true;
