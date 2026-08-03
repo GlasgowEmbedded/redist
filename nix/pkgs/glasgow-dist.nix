@@ -27,6 +27,10 @@ stdenv.mkDerivation {
     chmod -R +w $out/lib/python3.14/
     rm -r $out/lib/python3.14/test/
 
+    # Executable aliasing.
+    cp $out/bin/python{3,}.exe
+    cp $out/bin/python{3w,w}.exe
+
     # Grab the remaining Python dependencies.
     cp -n ${glasgowPkgs.api-ms-win-core-path}/bin/* $out/bin/
     ${lib.foldl (
