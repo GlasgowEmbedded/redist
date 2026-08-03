@@ -66,6 +66,10 @@
           inherit (win64Pkgs.glasgowPkgs) glasgow-dist;
           inherit (win64Pkgs.glasgowPkgs) celt;
         };
+
+        glasgow-installers = pkgs.callPackage ./nix/pkgs/installer/bundle.nix {
+          inherit glasgow-installer-win32 glasgow-installer-win64;
+        };
       in
       {
         formatter = pkgs.nixfmt-tree;
@@ -77,7 +81,12 @@
           glasgow-pkgs-win32 = win32Pkgs.glasgowPkgs;
           glasgow-pkgs-win64 = win64Pkgs.glasgowPkgs;
 
-          inherit glasgow-installer-win32 glasgow-installer-win64 pkgs;
+          inherit
+            glasgow-installer-win32
+            glasgow-installer-win64
+            glasgow-installers
+            pkgs
+            ;
         };
       }
     );
