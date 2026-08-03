@@ -9,6 +9,8 @@
   pkg-config,
   readline,
   stdenv,
+  tcl,
+  tk,
   zlib,
   zstd,
 }:
@@ -39,6 +41,8 @@ stdenv.mkDerivation {
     ncurses
     openssl
     readline
+    tcl
+    tk
     zlib
     zstd
   ];

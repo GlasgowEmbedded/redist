@@ -3,11 +3,18 @@
   glasgowPkgs,
   lib,
   stdenv,
+  tcl,
+  tk,
 }:
 
+let
+  pythonVersion = lib.versions.majorMinor glasgowPkgs.python.version;
+  tclVersion = lib.versions.majorMinor tcl.version;
+  tkVersion = lib.versions.majorMinor tk.version;
+in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
-  version = "2026-08-02";
+  version = "2026-08-03";
 
   phases = [ "installPhase" ];
 
@@ -21,15 +28,11 @@ stdenv.mkDerivation {
     cp -n ${glasgowPkgs.python}/bin/*.dll $out/bin/
     cp -n ${glasgowPkgs.python}/bin/*.exe $out/bin/
 
-    cp -r ${glasgowPkgs.python}/lib/python3.14/ $out/lib/
+    cp -r ${glasgowPkgs.python}/lib/python${pythonVersion}/ $out/lib/
 
     # Remove Python tests (~150 MB)
-    chmod -R +w $out/lib/python3.14/
-    rm -r $out/lib/python3.14/test/
-
-    # Executable aliasing.
-    cp $out/bin/python{3,}.exe
-    cp $out/bin/python{3w,w}.exe
+    chmod -R +w $out/lib/python${pythonVersion}/
+    rm -r $out/lib/python${pythonVersion}/test/
 
     # Grab the remaining Python dependencies.
     cp -n ${glasgowPkgs.api-ms-win-core-path}/bin/* $out/bin/
@@ -47,6 +50,14 @@ stdenv.mkDerivation {
       in
       "cp -n ${drv'}/bin/*.dll $out/bin\n" + acc
     ) "" glasgowPkgs.python.buildInputs}
+
+    # Grab Tcl/Tk components for Tkinter.
+    cp -r ${tcl}/lib/tcl${tclVersion}/ $out/lib/
+    cp -r ${tk}/lib/tk${tkVersion}/ $out/lib/
+
+    # Executable aliasing.
+    cp $out/bin/python{3,}.exe
+    cp $out/bin/python{3w,w}.exe
 
     # Yosys toolchain.
     cp -n ${glasgowPkgs.icestorm}/bin/icepack.exe $out/bin/
