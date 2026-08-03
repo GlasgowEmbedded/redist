@@ -61,6 +61,8 @@ stdenv.mkDerivation {
     cp -r ${buildPackages.glasgowPkgs.manual} $out/doc/manual/
 
     # Glasgow wheels.
-    cp -r ${glasgowPkgs.wheels} $out/wheels/
+    cp -r ${glasgowPkgs.wheels} $out/dist/
+    chmod +w $out/dist/
+    (cd $out/dist/; ls ./*.whl > requirements.txt)
   '';
 }

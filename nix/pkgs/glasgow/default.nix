@@ -23,7 +23,7 @@ stdenvNoCC.mkDerivation {
   ];
 
   buildPhase = ''
-    export PDM_BUILD_SCM_VERSION="0.1.dev0+${builtins.substring 0 7 src.rev}"
+    export PDM_BUILD_SCM_VERSION="0.1.dev0+g${builtins.substring 0 7 src.rev}"
     python -m pip wheel --no-build-isolation --no-deps ./software --wheel-dir $out
   '';
 }
