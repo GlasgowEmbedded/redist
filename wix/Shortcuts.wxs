@@ -14,7 +14,7 @@
             <!-- Desktop shortcut -->
             <Shortcut
                 Id="DesktopAppShortcut"
-                Name="!(loc.PackageName)"
+                Name="!(loc.ProductName)"
                 Description="!(loc.AppShortcutDescription)"
                 Target="[SystemFolder]cmd.exe"
                 Arguments="/k &quot;[INSTALLFOLDER]vars.bat&quot;"
