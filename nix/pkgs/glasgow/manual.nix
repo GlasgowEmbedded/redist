@@ -33,7 +33,7 @@ stdenvNoCC.mkDerivation {
     done
 
     export HOME=$TMP
-    export INTERSPHINX_PYTHON="${./intersphinx/objects.inv}"
+    export INTERSPHINX_PYTHON="${./intersphinx/python.inv}"
     export DOCS_IS_PRODUCTION=1
 
     for lang in en zh; do
