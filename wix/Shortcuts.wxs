@@ -76,5 +76,9 @@
                 KeyPath="yes"
             />
         </Component>
+
+        <ComponentGroup Id="AppShortcuts">
+            <ComponentRef Id="AppShortcuts"/>
+        </ComponentGroup>
     </Fragment>
 </Wix>

@@ -45,11 +45,7 @@
         <Property Id="ARPPRODUCTICON" Value="AppIcon"/>
         <Property Id="FullVersion" Value="v$(var.Version)+g$(var.GitShort)"/>
 
-        <!-- Components -->
-        <ComponentGroup Id="AppShortcuts">
-            <ComponentRef Id="AppShortcuts"/>
-        </ComponentGroup>
-
+        <!-- Features -->
         <Feature Id="MainFeature">
             <ComponentGroupRef Id="InstallFiles"/>
             <ComponentGroupRef Id="AppShortcuts"/>
