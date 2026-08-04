@@ -41,6 +41,7 @@
 
                 celt = self.callPackage ./nix/pkgs/celt.nix { };
 
+                extract-licences = self.callPackage ./nix/lib/licences.nix { };
                 glasgow-dist = self.callPackage ./nix/pkgs/glasgow-dist.nix { };
               });
             })

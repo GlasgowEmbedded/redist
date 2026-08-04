@@ -5,12 +5,32 @@
   stdenv,
   tcl,
   tk,
+  windows,
 }:
 
 let
   pythonVersion = lib.versions.majorMinor glasgowPkgs.python.version;
   tclVersion = lib.versions.majorMinor tcl.version;
   tkVersion = lib.versions.majorMinor tk.version;
+  inputs =
+    with glasgowPkgs;
+    [
+      libusb
+
+      python
+      api-ms-win-core-path
+
+      icestorm
+      nextpnr
+      prjtrellis
+      yosys
+    ]
+    ++ (with windows; [
+      # Some MinGW bits.
+      mcfgthreads
+      mingw_w64
+      pthreads
+    ]);
 in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
@@ -79,5 +99,12 @@ stdenv.mkDerivation {
     cp -r ${glasgowPkgs.wheels} $out/dist/
     chmod +w $out/dist/
     (cd $out/dist/; ls ./*.whl > requirements.txt)
+
+    # Extract licences.
+    mkdir $out/share/licences
+    ${lib.foldlAttrs (
+      acc: k: v:
+      "cp -r ${v} $out/share/licences/${k}\n" + acc
+    ) "" (glasgowPkgs.extract-licences inputs)}
   '';
 }
