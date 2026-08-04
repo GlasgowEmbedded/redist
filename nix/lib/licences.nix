@@ -13,7 +13,7 @@ let
       if lib.hasPrefix "qt6" name then
         ''
           # Qt generates a SBOM for us.
-          cp -r ${drv}/sbom $out
+          cp -L -r ${drv}/sbom $out
         ''
       else
         ''
@@ -37,7 +37,7 @@ let
           for prefix in COPYING LICENCE LICENSE LICENSE_1_0 license; do
             for file in $SOURCES/$prefix $SOURCES/$prefix.*; do
               if [[ -e $file ]]; then
-                cp -r $file $out
+                cp -L -r $file $out
                 copied=$((copied + 1))
               fi
             done
