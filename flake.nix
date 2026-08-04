@@ -39,6 +39,8 @@
                 nextpnr = self.callPackage ./nix/pkgs/nextpnr.nix { };
                 prjtrellis = self.callPackage ./nix/pkgs/prjtrellis.nix { };
 
+                pxview = self.callPackage ./nix/pkgs/pxview.nix { };
+
                 celt = self.callPackage ./nix/pkgs/celt.nix { };
 
                 extract-licences = self.callPackage ./nix/lib/licences.nix { };

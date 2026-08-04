@@ -3,6 +3,7 @@
   callPackage,
   glasgowPkgs,
   lib,
+  pkgs,
   stdenv,
   tcl,
   tk,
@@ -27,12 +28,21 @@ let
       nextpnr
       prjtrellis
       yosys
+
+      pxview
     ]
     ++ (with windows; [
       # Some MinGW bits.
       mcfgthreads
       mingw_w64
       pthreads
+    ])
+    ++ (with pkgs; [
+      # Qt 6 Windows 7 patches. We don't use this directly so don't extract licence information for build inputs.
+      (vlc.overrideAttrs (_: {
+        buildInputs = [ ];
+        propagatedBuildInputs = [ ];
+      }))
     ]);
 in
 stdenv.mkDerivation {
@@ -106,6 +116,11 @@ stdenv.mkDerivation {
     cp -r ${glasgowPkgs.wheels} $out/dist/
     chmod +w $out/dist/
     (cd $out/dist/; ls ./*.whl > requirements.txt)
+
+    # PXView.
+    cp -n ${glasgowPkgs.pxview}/bin/* $out/bin/
+    cp -r ${glasgowPkgs.pxview}/share/* $out/share/
+    cp -r ${pkgs.qt6}/plugins/* $out/bin/
 
     # Extract licences.
     mkdir $out/share/licences
