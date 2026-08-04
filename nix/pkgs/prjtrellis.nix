@@ -37,6 +37,8 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     (lib.cmakeBool "BUILD_PYTHON" (!isCross))
     (lib.cmakeFeature "CURRENT_GIT_VERSION" "${builtins.substring 0 7 src.rev}")
+
+    (lib.cmakeFeature "CMAKE_INSTALL_DATADIR" "${placeholder "out"}/share")
   ];
 
   enableParallelBuilding = true;

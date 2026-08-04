@@ -37,7 +37,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
-  version = "2026-08-03";
+  version = "2026-08-04";
 
   phases = [ "installPhase" ];
 
@@ -88,6 +88,7 @@ stdenv.mkDerivation {
 
     cp -n ${glasgowPkgs.prjtrellis}/bin/ecppack.exe $out/bin/
     cp -n ${glasgowPkgs.prjtrellis}/bin/*.dll $out/bin/
+    cp -r ${glasgowPkgs.prjtrellis}/share/trellis $out/share/
 
     cp -n ${glasgowPkgs.nextpnr}/bin/* $out/bin/
 
