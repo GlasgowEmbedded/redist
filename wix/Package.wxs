@@ -26,13 +26,12 @@
             <MediaTemplate EmbedCab="no" CompressionLevel="none"/>
         <?endif?>
 
-        <!-- MSI bitness must match host, unless `msiexec /i glasgow.msi ForceInstall=1` -->
-        <Property Id="ForceInstall" Value="0"/>
+        <!-- MSI bitness must match host -->
         <?if "$(var.Platform)" = "x64" ?>
-            <Launch Condition="VersionNT64 OR ForceInstall" Message="!(loc.x86VersionRequired)"/>
+            <Launch Condition="VersionNT64" Message="!(loc.x86VersionRequired)"/>
         <?endif?>
         <?if "$(var.Platform)" = "x86" ?>
-            <Launch Condition="NOT VersionNT64 OR ForceInstall" Message="!(loc.x64VersionRequired)"/>
+            <Launch Condition="NOT VersionNT64" Message="!(loc.x64VersionRequired)"/>
         <?endif?>
 
         <!-- Windows 7 SP1 or later -->
