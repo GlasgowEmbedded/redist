@@ -18,6 +18,7 @@
         Manufacturer="!(loc.Manufacturer)"
         Name="!(loc.PackageName)"
         Version="$(var.Version)"
+        Codepage="UTF-8"
     >
         <!-- Embed cabinet file and compress it (in Release builds only) -->
         <?if "$(var.Configuration)" = "Release" ?>
