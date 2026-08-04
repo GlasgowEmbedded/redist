@@ -16,13 +16,13 @@
         -->
         <SetProperty
             Id="InstallWheels"
-            Value='"[SystemFolder]cmd.exe" /c "cd "[INSTALLFOLDER]dist" &amp;&amp; set PYTHONNOUSERSITE=1 &amp;&amp; "[INSTALLFOLDER]bin\python3.exe" $(var.PipInstallArgs)"'
+            Value='"[SystemFolder]cmd.exe" /c "cd /d "[INSTALLFOLDER]dist" &amp;&amp; set PYTHONNOUSERSITE=1 &amp;&amp; "[INSTALLFOLDER]bin\python3.exe" $(var.PipInstallArgs)"'
             Before="InstallWheels"
             Sequence="execute"
         />
         <SetProperty
             Id="UninstallWheels"
-            Value='"[SystemFolder]cmd.exe" /c "cd "[INSTALLFOLDER]dist" &amp;&amp; set PYTHONNOUSERSITE=1 &amp;&amp; "[INSTALLFOLDER]bin\python3.exe" $(var.PipUninstallArgs)"'
+            Value='"[SystemFolder]cmd.exe" /c "cd /d "[INSTALLFOLDER]dist" &amp;&amp; set PYTHONNOUSERSITE=1 &amp;&amp; "[INSTALLFOLDER]bin\python3.exe" $(var.PipUninstallArgs)"'
             Before="UninstallWheels"
             Sequence="execute"
         />
