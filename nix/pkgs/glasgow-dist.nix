@@ -1,5 +1,6 @@
 {
   buildPackages,
+  callPackage,
   glasgowPkgs,
   lib,
   stdenv,
@@ -12,6 +13,8 @@ let
   pythonVersion = lib.versions.majorMinor glasgowPkgs.python.version;
   tclVersion = lib.versions.majorMinor tcl.version;
   tkVersion = lib.versions.majorMinor tk.version;
+  glasgowSrc = callPackage ./glasgow/sources.nix { };
+
   inputs =
     with glasgowPkgs;
     [
@@ -94,6 +97,9 @@ stdenv.mkDerivation {
 
     # Glasgow manual. Copied from buildPackages since it's static.
     cp -r ${buildPackages.glasgowPkgs.manual} $out/doc/manual/
+
+    # Glasgow examples.
+    cp -r ${glasgowSrc}/examples $out/doc/examples/
 
     # Glasgow wheels.
     cp -r ${glasgowPkgs.wheels} $out/dist/
