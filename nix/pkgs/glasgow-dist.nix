@@ -35,7 +35,6 @@ let
       # Some MinGW bits.
       mcfgthreads
       mingw_w64
-      pthreads
     ])
     ++ (with pkgs; [
       # Qt 6 Windows 7 patches. We don't use this directly so don't extract licence information for build inputs.
@@ -104,6 +103,7 @@ stdenv.mkDerivation {
 
     cp ${glasgowPkgs.yosys}/bin/yosys.exe $out/bin/
     cp ${glasgowPkgs.yosys}/bin/yosys-abc.exe $out/bin/
+    cp -n ${glasgowPkgs.yosys}/bin/*.dll $out/bin/
     cp -r ${glasgowPkgs.yosys}/share/yosys/ $out/share/
 
     # Glasgow manual. Copied from buildPackages since it's static.
