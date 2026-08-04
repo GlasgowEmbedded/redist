@@ -1,27 +1,27 @@
 <WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="zh-CN">
-   <String Id="x64VersionRequired" Value="You must install the 64-bit version of this product on 64-bit Windows."/>
-   <String Id="x86VersionRequired" Value="You must install the 32-bit version of this product on 32-bit Windows."/>
-   <String Id="OperatingSystemTooOld" Value="This product requires at least Windows 7 SP1."/>
+   <String Id="x64VersionRequired" Value="在 64 位的 Windows 系统上，您必须安装 64 位版本的本产品。"/>
+   <String Id="x86VersionRequired" Value="在 32 位的 Windows 系统上，您必须安装 32 位版本的本产品。"/>
+   <String Id="OperatingSystemTooOld" Value="本产品需要系统版本至少为 Windows 7 SP1。"/>
 
-   <String Id="Manufacturer" Value="Glasgow Embedded Project"/>
-   <String Id="ProductName" Value="Glasgow Interface Explorer"/>
-   <String Id="PackageName" Value="Glasgow Interface Explorer Toolchain"/>
+   <String Id="Manufacturer" Value="Glasgow 嵌入式项目"/>
+   <String Id="ProductName" Value="Glasgow 可重构数字接口调试器"/>
+   <String Id="PackageName" Value="Glasgow 可重构数字接口调试器工具链"/>
 
    <String Id="WelcomeDlgDescription" Value="安装向导将在计算机上安装 [ProductName] [FullVersion]。单击“下一步”继续，或单击“取消”退出安装向导。" />
 
-   <String Id="AppShortcutName" Value="Launch terminal"/>
-   <String Id="AppShortcutDescription" Value="Launch a terminal with the Glasgow Interface Explorer tools available."/>
+   <String Id="AppShortcutName" Value="启动终端"/>
+   <String Id="AppShortcutDescription" Value="启动一个 Glasgow 可重构数字接口调试器工具可用的终端"/>
 
    <String Id="PythonIDLEShortcutName" Value="IDLE Shell"/>
-   <String Id="PythonIDLEShortcutDescription" Value="Launch IDLE, Python's Integrated Development and Learning Environment."/>
+	   <String Id="PythonIDLEShortcutDescription" Value="启动 IDLE，Python 所内置的开发与学习环境。"/>
 
-   <String Id="ManualShortcutName" Value="Open manual"/>
-   <String Id="ManualShortcutDescription" Value="Open the Glasgow Interface Explorer manual in the default web browser."/>
+   <String Id="ManualShortcutName" Value="打开手册"/>
+   <String Id="ManualShortcutDescription" Value="在默认的网页浏览器中打开 Glasgow 可重构数字接口调试器手册"/>
    <String Id="ManualLocale" Value="zh"/>
 
-   <String Id="UninstallShortcutName" Value="Uninstall"/>
-   <String Id="UninstallShortcutDescription" Value="Remove the Glasgow Interface Explorer toolchain from this computer."/>
+   <String Id="UninstallShortcutName" Value="卸载"/>
+   <String Id="UninstallShortcutDescription" Value="从本计算机移除 Glasgow 可重构数字接口调试器工具链"/>
 
-   <String Id="InstallingWheels" Value="Installing Python packages"/>
-   <String Id="UninstallingWheels" Value="Uninstalling Python packages"/>
+   <String Id="InstallingWheels" Value="安装 Python 软件包"/>
+   <String Id="UninstallingWheels" Value="卸载 Python 软件包"/>
 </WixLocalization>
