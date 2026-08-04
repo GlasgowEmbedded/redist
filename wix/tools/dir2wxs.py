@@ -21,15 +21,15 @@ def convert_dir(dir, comp_group, path):
         for entry in it:
             if entry.is_file():
                 file_id = f"{comp_group.attrib['Id']}_file{autoidx}"
-                ET.SubElement(dir_comp, "File",
+                entry_file = ET.SubElement(dir_comp, "File",
                     Id=file_id,
                     Name=entry.name,
                     Source="Z:" + os.path.abspath(entry.path),
                 )
                 autoidx += 1
             else:
-                entry_file = ET.SubElement(dir, "Directory", Name=entry.name)
-                convert_dir(entry_file, comp_group, entry.path)
+                entry_dir = ET.SubElement(dir, "Directory", Name=entry.name)
+                convert_dir(entry_dir, comp_group, entry.path)
 
 
 def convert(dir_id, group_id, path):
@@ -38,7 +38,9 @@ def convert(dir_id, group_id, path):
     dir_ref = ET.SubElement(frag, "DirectoryRef", Id=dir_id)
     comp_group = ET.SubElement(frag, "ComponentGroup", Id=group_id)
     convert_dir(dir_ref, comp_group, path)
-    return ET.ElementTree(root)
+    tree = ET.ElementTree(root)
+    ET.indent(tree)
+    return tree
 
 
 def main():
