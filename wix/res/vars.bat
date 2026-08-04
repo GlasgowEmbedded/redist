@@ -1,2 +1,2 @@
-@set PATH=%PATH%;%~d0%~p0bin
+@set PATH=%~dp0bin;%PATH%
 @cd %USERPROFILE%
