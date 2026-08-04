@@ -88,7 +88,7 @@ stdenv.mkDerivation {
 
     (lib.cmakeFeature "BBA_IMPORT" "${bba}/lib/cmake/bbasm.cmake")
 
-    (lib.cmakeFeature "CURRENT_GIT_VERSION" "${version}-9999-${builtins.substring 0 7 src.rev}")
+    (lib.cmakeFeature "CURRENT_GIT_VERSION" "nextpnr-${version}-9999-g${builtins.substring 0 7 src.rev}")
   ];
 
   enableParallelBuilding = true;
