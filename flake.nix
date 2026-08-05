@@ -4,6 +4,16 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
+  nixConfig = {
+    extra-substituters = [
+      "https://cache.whitequark.org/bin/"
+    ];
+
+    extra-trusted-public-keys = [
+      "bin:boRn4bvf6UU8reNd90c1fkSghRYqYHIqB6HzArN51fw="
+    ];
+  };
+
   outputs =
     {
       self,
