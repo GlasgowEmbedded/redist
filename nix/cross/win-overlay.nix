@@ -17,10 +17,12 @@ final: prev: {
   );
 
   # Required for libsigrok.
-  gettext = prev.gettext.overrideAttrs (oldAttrs:
+  gettext = prev.gettext.overrideAttrs (
+    oldAttrs:
     lib.optionalAttrs final.stdenv.hostPlatform.isMinGW {
       configureFlags = oldAttrs.configureFlags ++ [ "--enable-static" ];
-    });
+    }
+  );
 
   glib =
     if final.stdenv.hostPlatform.isMinGW then
