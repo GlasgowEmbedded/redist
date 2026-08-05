@@ -66,4 +66,6 @@ stdenv.mkDerivation rec {
     (lib.cmakeBool "BUILD_qtdeclarative" false)
     (lib.cmakeFeature "QT_BUILD_SUBMODULES" "qtbase;qtsvg;qtwebsockets")
   ];
+
+  enableParallelBuilding = true;
 }

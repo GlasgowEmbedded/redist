@@ -32,4 +32,6 @@ stdenv.mkDerivation {
   cmakeFlags = [
     (lib.cmakeBool "FTDI_EEPROM" false)
   ];
+
+  enableParallelBuilding = true;
 }
