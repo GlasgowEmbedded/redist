@@ -5,7 +5,10 @@
 
 import pkgs.path {
   inherit (pkgs.stdenv.hostPlatform) system;
-  crossSystem = pkgs.lib.systems.examples.mingw-msvcrt-i686;
+  crossSystem = {
+    config = "i686-w64-mingw32";
+    libc = "ucrt";
+  };
 
   overlays = overlays ++ [
     (pkgs.callPackage ./win-overlay.nix { })
