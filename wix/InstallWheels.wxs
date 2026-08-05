@@ -35,16 +35,26 @@
             running with the local user (or administrator) privileges, and they communicate via
             the MSI database.
         -->
-        <?foreach ActionId in InstallWheels;UninstallWheels ?>
-            <CustomAction
-                Id="$(ActionId)"
-                BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)"
-                DllEntry="WixQuietExec"
-                Execute="deferred"
-                Impersonate="no"
-                Return="check"
-            />
-        <?endforeach?>
+        <CustomAction
+            Id="InstallWheels"
+            BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)"
+            DllEntry="WixQuietExec"
+            Execute="deferred"
+            Impersonate="no"
+            Return="check"
+        />
+        <!--
+            Ignore errors on uninstall. The most common cause is a manually deleted installation
+            directory.
+        -->
+        <CustomAction
+            Id="UninstallWheels"
+            BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)"
+            DllEntry="WixQuietExec"
+            Execute="deferred"
+            Impersonate="no"
+            Return="ignore"
+        />
 
         <!-- Allow running as `msiexec /x glasogw.msi RunPip=0` to skip the pip actions -->
         <Property Id="RunPip" Value="1"/>
