@@ -16,13 +16,13 @@
 
 stdenv.mkDerivation rec {
   pname = "yosys";
-  version = "0.67";
+  version = "0.68";
 
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "${pname}";
-    rev = "d5f1795249138cf7d4f065a4dfaf2a095b33ec76";
-    hash = "sha256-BYeZ30T004Lj3YOsSSj/pYsytRBwNlyRBtTO43HhVwA=";
+    rev = "v${version}";
+    hash = "sha256-cf3L3Il717ReAcPTPNHZLwldDeCwuPqHYoxeQusBOOg=";
     fetchSubmodules = true;
   };
 
