@@ -9,6 +9,7 @@
             <!-- Sets up PATH so we don't have to update it globally -->
             <File
                 Source="res\vars.bat"
+                KeyPath="yes"
             />
 
             <!-- Desktop shortcut -->
@@ -65,20 +66,27 @@
                 Directory="AppProgramsFolder"
                 On="uninstall"
             />
+        </Component>
 
-            <!-- Serves as a key path for the component and has no other purpose -->
-            <RegistryValue
-                Root="HKLM"
-                Key="Software\GlasgowInterfaceExplorer"
-                Name="Installed"
-                Type="integer"
-                Value="1"
-                KeyPath="yes"
+        <Component
+            Id="PXViewShortcuts"
+            Guid="86113788-8ffa-4fea-967d-eee288873d47"
+            Directory="INSTALLFOLDER"
+        >
+            <!-- Start menu shortcuts -->
+            <Shortcut
+                Id="StartMenuPXViewShortcut"
+                Name="!(loc.PXViewShortcutName)"
+                Description="!(loc.PXViewShortcutDescription)"
+                Target="[INSTALLFOLDER]bin\PXView.exe"
+                WorkingDirectory="INSTALLFOLDER"
+                Directory="AppProgramsFolder"
             />
         </Component>
 
-        <ComponentGroup Id="AppShortcuts">
+        <ComponentGroup Id="Shortcuts">
             <ComponentRef Id="AppShortcuts"/>
+            <ComponentRef Id="PXViewShortcuts"/>
         </ComponentGroup>
     </Fragment>
 </Wix>

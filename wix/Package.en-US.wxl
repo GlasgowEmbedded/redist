@@ -12,7 +12,10 @@
    <String Id="AppShortcutName" Value="Launch terminal"/>
    <String Id="AppShortcutDescription" Value="Launch a terminal with the Glasgow Interface Explorer tools available."/>
 
-   <String Id="PythonIDLEShortcutName" Value="IDLE Shell"/>
+   <String Id="PXViewShortcutName" Value="PXView $(env.PXVIEW_VERSION)"/>
+   <String Id="PXViewShortcutDescription" Value="Launch PXView, a logic analyzer frontend."/>
+
+   <String Id="PythonIDLEShortcutName" Value="IDLE Shell $(env.PYTHON_VERSION)"/>
    <String Id="PythonIDLEShortcutDescription" Value="Launch IDLE, Python's Integrated Development and Learning Environment."/>
 
    <String Id="ManualShortcutName" Value="Open manual"/>
