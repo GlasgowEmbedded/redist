@@ -29,6 +29,7 @@ let
       prjtrellis
       yosys
 
+      pulseview
       pxview
     ]
     ++ (with windows; [
