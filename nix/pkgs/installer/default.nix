@@ -5,6 +5,7 @@
   celt,
   fetchzip,
   glasgowPkgs,
+  glibcLocales,
   python3,
   runCommand,
   wine64,
@@ -26,6 +27,7 @@ in
 runCommand "build-installer"
   {
     nativeBuildInputs = [
+      glibcLocales
       python3
       wine64
     ];
@@ -35,6 +37,7 @@ runCommand "build-installer"
     export FONTCONFIG_FILE=$PWD/fc.conf
     export GIT_SHORT=${builtins.substring 0 7 glasgowPkgs.glasgow.src.rev}
     export HOME=$TMP
+    export LANG=en_US.UTF-8
     export WINEDEBUG=-all
 
     # Make Fontconfig happy to reduce noise.
