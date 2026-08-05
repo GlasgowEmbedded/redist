@@ -3,20 +3,11 @@
 import os
 import argparse
 import xml.etree.ElementTree as ET
-import subprocess
 import uuid
 import re
 
 
 autoidx = 0
-
-
-def get_wine_path(posix_path):
-    wine_path = "Z:" + os.path.abspath(posix_path)
-    if all(ord(x) in range(128) for x in wine_path):
-        return wine_path
-    else:
-        return subprocess.check_output(["winepath", "-s", wine_path], encoding="utf-8").rstrip()
 
 
 def convert_dir(dir, comp_group, path):
@@ -33,7 +24,7 @@ def convert_dir(dir, comp_group, path):
                 entry_file = ET.SubElement(dir_comp, "File",
                     Id=file_id,
                     Name=entry.name,
-                    Source=get_wine_path(entry.path),
+                    Source="Z:" + os.path.abspath(entry.path),
                 )
                 autoidx += 1
             else:
