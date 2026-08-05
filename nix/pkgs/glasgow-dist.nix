@@ -46,7 +46,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
-  version = "2026-08-04";
+  version = "2026-08-05";
 
   phases = [ "installPhase" ];
 
@@ -117,6 +117,10 @@ stdenv.mkDerivation {
     chmod +w $out/dist/
     (cd $out/dist/; ls ./*.whl > requirements.txt)
 
+    # Pulseview.
+    cp -n ${glasgowPkgs.pulseview}/bin/* $out/bin/
+    cp -r ${glasgowPkgs.libsigrokdecode}/share/libsigrokdecode/ $out/share
+
     # PXView.
     cp -n ${glasgowPkgs.pxview}/bin/* $out/bin/
     cp -r ${glasgowPkgs.pxview}/share/PXView/ $out/share/
@@ -128,7 +132,7 @@ stdenv.mkDerivation {
     # Grab the bits of libsigrok that PXView leaves lying around in share.
     # We need to do this since we ship both PXView and PulseView and we don't want them to fight.
     chmod -R +w $out/share/PXView
-    cp -r ${glasgowPkgs.pxview}/share/libsigrokdecode/decoders $out/share/PXView/
+    cp -r ${glasgowPkgs.pxview}/share/libsigrokdecode/decoders/ $out/share/PXView/
     cp ${glasgowPkgs.pxview}/share/sigrok-firmware/* $out/share/PXView/res/
 
     # Extract licences.

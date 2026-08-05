@@ -43,6 +43,10 @@
                 prjtrellis = self.callPackage ./nix/pkgs/prjtrellis.nix { };
                 yosys = self.callPackage ./nix/pkgs/yosys.nix { };
 
+                libsigrok = self.callPackage ./nix/pkgs/sigrok/libsigrok.nix { };
+                libsigrokdecode = self.callPackage ./nix/pkgs/sigrok/libsigrokdecode.nix { };
+                pulseview = self.callPackage ./nix/pkgs/sigrok/pulseview.nix { };
+
                 pxview = self.callPackage ./nix/pkgs/pxview.nix { };
 
                 celt = self.callPackage ./nix/pkgs/celt.nix { };

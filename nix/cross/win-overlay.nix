@@ -16,6 +16,12 @@ final: prev: {
     }
   );
 
+  # Required for libsigrok.
+  gettext = prev.gettext.overrideAttrs (oldAttrs:
+    lib.optionalAttrs final.stdenv.hostPlatform.isMinGW {
+      configureFlags = oldAttrs.configureFlags ++ [ "--enable-static" ];
+    });
+
   glib =
     if final.stdenv.hostPlatform.isMinGW then
       (prev.glib.override {
@@ -32,6 +38,9 @@ final: prev: {
         })
     else
       prev.glib;
+
+  glibmm =
+    if final.stdenv.hostPlatform.isMinGW then final.callPackage ./glibmm.nix { } else prev.glibmm;
 
   libconfuse = prev.libconfuse.overrideAttrs (oldAttrs: {
     meta.platforms = oldAttrs.meta.platforms ++ lib.platforms.windows;
