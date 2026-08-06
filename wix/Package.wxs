@@ -48,6 +48,7 @@
 
         <!-- Features -->
         <Feature Id="MainFeature">
+            <ComponentGroupRef Id="InstallUCRT"/>
             <ComponentGroupRef Id="InstallFiles"/>
             <ComponentGroupRef Id="Shortcuts"/>
         </Feature>
