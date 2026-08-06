@@ -12,6 +12,9 @@
    <String Id="AppShortcutName" Value="启动终端"/>
    <String Id="AppShortcutDescription" Value="启动一个 Glasgow 可重构数字接口调试器工具可用的终端"/>
 
+   <String Id="PulseViewShortcutName" Value="PulseView $(env.PULSEVIEW_VERSION)"/>
+   <String Id="PulseViewShortcutDescription" Value="Launch PulseView, a logic analyzer frontend."/>
+
    <String Id="PXViewShortcutName" Value="PXView $(env.PXVIEW_VERSION)"/>
    <String Id="PXViewShortcutDescription" Value="Launch PXView, a logic analyzer frontend."/>
 

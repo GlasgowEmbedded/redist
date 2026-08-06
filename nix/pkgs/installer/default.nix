@@ -40,6 +40,7 @@ runCommand "build-installer"
     export LANG=en_US.UTF-8
     export PXVIEW_VERSION=${glasgowPkgs.pxview.version}
     export PYTHON_VERSION=${glasgowPkgs.python.version}
+    export PULSEVIEW_VERSION=${glasgowPkgs.pulseview.version}
     export WINEDEBUG=-all
 
     # Make Fontconfig happy to reduce noise.

@@ -12,6 +12,9 @@
    <String Id="AppShortcutName" Value="Launch terminal"/>
    <String Id="AppShortcutDescription" Value="Launch a terminal with the Glasgow Interface Explorer tools available."/>
 
+   <String Id="PulseViewShortcutName" Value="PulseView $(env.PULSEVIEW_VERSION)"/>
+   <String Id="PulseViewShortcutDescription" Value="Launch PulseView, a logic analyzer frontend."/>
+
    <String Id="PXViewShortcutName" Value="PXView $(env.PXVIEW_VERSION)"/>
    <String Id="PXViewShortcutDescription" Value="Launch PXView, a logic analyzer frontend."/>
 

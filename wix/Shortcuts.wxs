@@ -69,6 +69,22 @@
         </Component>
 
         <Component
+            Id="PulseViewShortcuts"
+            Guid="500c91e7-4bec-4d6d-8988-c0efa0d4b09e"
+            Directory="INSTALLFOLDER"
+        >
+            <!-- Start menu shortcuts -->
+            <Shortcut
+                Id="StartMenuPulseViewShortcut"
+                Name="!(loc.PulseViewShortcutName)"
+                Description="!(loc.PulseViewShortcutDescription)"
+                Target="[INSTALLFOLDER]bin\pulseview.exe"
+                WorkingDirectory="INSTALLFOLDER"
+                Directory="AppProgramsFolder"
+            />
+        </Component>
+
+        <Component
             Id="PXViewShortcuts"
             Guid="86113788-8ffa-4fea-967d-eee288873d47"
             Directory="INSTALLFOLDER"
@@ -86,6 +102,7 @@
 
         <ComponentGroup Id="Shortcuts">
             <ComponentRef Id="AppShortcuts"/>
+            <ComponentRef Id="PulseViewShortcuts"/>
             <ComponentRef Id="PXViewShortcuts"/>
         </ComponentGroup>
     </Fragment>
