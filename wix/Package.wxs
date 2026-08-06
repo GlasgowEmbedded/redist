@@ -36,7 +36,7 @@
         <?endif?>
 
         <!-- Windows 7 SP1 or later -->
-        <Launch Condition="Installed OR VersionNT > 601 OR (VersionNT == 601 AND WindowsBuild >= 7100 AND ServicePackLevel >= 1)" Message="!(loc.OperatingSystemTooOld)"/>
+        <Launch Condition="Installed OR (VersionNT > 601) OR ((VersionNT = 601) AND (WindowsBuild >= 7100) AND (ServicePackLevel >= 1))" Message="!(loc.OperatingSystemTooOld)"/>
 
         <!-- Uninstall other versions. https://docs.firegiant.com/wix/schema/wxs/majorupgrade/ -->
         <MajorUpgrade AllowDowngrades="yes"/>
