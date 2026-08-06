@@ -22,7 +22,8 @@
     >
         <!-- Embed cabinet file and compress it (in Release builds only) -->
         <?if "$(var.Configuration)" = "Release" ?>
-            <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>
+            <!-- Cabinet files are compressed one at a time; lower MUMS means more threads -->
+            <MediaTemplate EmbedCab="yes" CompressionLevel="high" MaximumUncompressedMediaSize="64"/>
         <?else?>
             <MediaTemplate EmbedCab="no" CompressionLevel="none"/>
         <?endif?>

@@ -18,6 +18,11 @@
     <PropertyGroup>
         <!-- Validation crashes on Wine for some reason -->
         <SuppressValidation>true</SuppressValidation>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <Cultures>en-US;zh-CN</Cultures>
+        <!-- Force cabinets to be reused between languages. Completely undocumented and sketchy -->
+        <_WixBuildCabinetCachePath>$(IntermediateOutputPath)cabcache\</_WixBuildCabinetCachePath>
     </PropertyGroup>
 </Project>
