@@ -1,0 +1,7 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <ComponentGroup Id="InstallZadig">
+            <Files Directory="INSTALLFOLDER_bin" Include="res/zadig-$(env.ZADIG_VERSION).exe"/>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

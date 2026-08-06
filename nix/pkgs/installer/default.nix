@@ -42,6 +42,7 @@ runCommand "build-installer"
     export PYTHON_VERSION=${glasgowPkgs.python.version}
     export PULSEVIEW_VERSION=${glasgowPkgs.pulseview.version}
     export WINEDEBUG=-all
+    export ZADIG_VERSION=2.9
 
     # Make Fontconfig happy to reduce noise.
     cat >fc.conf <<EOF
@@ -76,7 +77,7 @@ runCommand "build-installer"
     cp -r ${glasgow-dist} src/
     chmod -R +w src/
 
-    python tools/dir2wxs.py -dir src -wxs InstallFiles.wxs
+    python tools/dir2wxs.py -dir src -wxs InstallApp.wxs -component-group InstallApp
     run_wine ${dotnet-sdk}/dotnet.exe build -p:Platform=${glasgow-arch} -p:Configuration=${glasgow-type}
 
     # Merge MSIs.

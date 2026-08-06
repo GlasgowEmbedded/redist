@@ -100,10 +100,27 @@
             />
         </Component>
 
+        <Component
+            Id="ZadigShortcuts"
+            Guid="39a5e518-2712-482a-a42e-514f1977175c"
+            Directory="INSTALLFOLDER"
+        >
+            <!-- Start menu shortcuts -->
+            <Shortcut
+                Id="StartMenuZadigShortcut"
+                Name="!(loc.ZadigShortcutName)"
+                Description="!(loc.ZadigShortcutDescription)"
+                Target="[INSTALLFOLDER]bin\zadig.exe"
+                WorkingDirectory="INSTALLFOLDER"
+                Directory="AppProgramsFolder"
+            />
+        </Component>
+
         <ComponentGroup Id="Shortcuts">
             <ComponentRef Id="AppShortcuts"/>
             <ComponentRef Id="PulseViewShortcuts"/>
             <ComponentRef Id="PXViewShortcuts"/>
+            <ComponentRef Id="ZadigShortcuts"/>
         </ComponentGroup>
     </Fragment>
 </Wix>

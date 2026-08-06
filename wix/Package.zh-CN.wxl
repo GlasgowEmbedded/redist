@@ -25,6 +25,9 @@
    <String Id="ManualShortcutDescription" Value="在默认的网页浏览器中打开 Glasgow 可重构数字接口调试器手册。"/>
    <String Id="ManualLocale" Value="zh"/>
 
+   <String Id="ZadigShortcutName" Value="Zadig $(env.ZADIG_VERSION)"/>
+   <String Id="ZadigShortcutDescription" Value="启动 Zadig USB 驱动安装工具。"/>
+
    <String Id="UninstallShortcutName" Value="卸载"/>
    <String Id="UninstallShortcutDescription" Value="从本计算机移除 Glasgow 可重构数字接口调试器工具链。"/>
 

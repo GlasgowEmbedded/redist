@@ -25,6 +25,9 @@
    <String Id="ManualShortcutDescription" Value="Open the Glasgow Interface Explorer manual in the default web browser."/>
    <String Id="ManualLocale" Value="en"/>
 
+   <String Id="ZadigShortcutName" Value="Zadig $(env.ZADIG_VERSION)"/>
+   <String Id="ZadigShortcutDescription" Value="Launch Zadig, a tool for installing USB drivers."/>
+
    <String Id="UninstallShortcutName" Value="Uninstall"/>
    <String Id="UninstallShortcutDescription" Value="Remove the Glasgow Interface Explorer toolchain from this computer."/>
 
