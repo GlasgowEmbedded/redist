@@ -27,7 +27,7 @@ jobs:
           max-jobs = auto
           EOF
 
-          nix profile add nixpkgs#{nodejs,zip}
+          nix profile add nixpkgs#{coreutils-full,gnused,nodejs,zip}
       - name: Check out source code
         uses: https://code.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Build MSI installers
@@ -55,4 +55,5 @@ jobs:
             -F "parameters.repositoryCommitId=${{ forgejo.sha }}" \
             -F "parameters.productVersion=0.1" \
             https://app.signpath.io/API/v1/${{ vars.SIGNPATH_ORG }}/SigningRequests/SubmitWithArtifact
-          sed <response.txt 's,\r,,'  | grep -oP 'location: \K.+' | tee "$GITHUB_OUTPUT"
+          signingRequestId=$(sed <response.txt 's,\r,,' | grep -oP 'Location: \K.+')
+          echo "signingRequestId=${signingRequestId}" >>"$GITHUB_OUTPUT"
