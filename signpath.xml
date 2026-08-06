@@ -1,0 +1,29 @@
+<!-- The configuration we're using to sign the Windows MSI installers. -->
+<artifact-configuration
+    xmlns="http://signpath.io/artifact-configuration/v1"
+    xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://signpath.io/artifact-configuration/v1 https://app.signpath.io/Web/artifact-configuration/v1.xsd"
+>
+    <parameters>
+        <parameter name="repositoryUrl"/>
+        <parameter name="repositoryBranchName"/>
+        <parameter name="repositoryCommitId"/>
+        <parameter name="productVersion"/>
+    </parameters>
+    <zip-file>
+        <msi-file path="GlasgowInterfaceExplorer-x86.msi">
+            <pe-file-set>
+                <include path="PFiles/Glasgow Interface Explorer/bin/zadig.exe"/>
+                <for-each><authenticode-verify/></for-each>
+            </pe-file-set>
+            <authenticode-sign/>
+        </msi-file>
+        <msi-file path="GlasgowInterfaceExplorer-x64.msi">
+            <pe-file-set>
+                <include path="PFiles64/Glasgow Interface Explorer/bin/zadig.exe"/>
+                <for-each><authenticode-verify/></for-each>
+            </pe-file-set>
+            <authenticode-sign/>
+        </msi-file>
+    </zip-file>
+</artifact-configuration>
