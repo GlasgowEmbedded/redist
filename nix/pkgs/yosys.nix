@@ -47,6 +47,8 @@ stdenv.mkDerivation rec {
     (lib.cmakeBool "YOSYS_WITHOUT_SLANG" true)
 
     (lib.cmakeFeature "YOSYS_CHECKOUT_INFO" "${builtins.substring 0 7 src.rev}")
+
+    (lib.cmakeFeature "YOSYS_COMPONENTS" "synth_ice40;synth_lattice")
   ];
 
   enableParallelBuilding = true;
