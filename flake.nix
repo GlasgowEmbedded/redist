@@ -46,6 +46,7 @@
                 libsigrok = self.callPackage ./nix/pkgs/sigrok/libsigrok.nix { };
                 libsigrokdecode = self.callPackage ./nix/pkgs/sigrok/libsigrokdecode.nix { };
                 pulseview = self.callPackage ./nix/pkgs/sigrok/pulseview.nix { };
+                sigrok-cli = self.callPackage ./nix/pkgs/sigrok/sigrok-cli.nix { };
 
                 pxview = self.callPackage ./nix/pkgs/pxview.nix { };
 

@@ -122,13 +122,17 @@ stdenv.mkDerivation {
     cp -n ${glasgowPkgs.pulseview}/bin/* $out/bin/
     cp -r ${glasgowPkgs.libsigrokdecode}/share/libsigrokdecode/ $out/share
 
+    # sigrok-cli
+    cp -n ${glasgowPkgs.sigrok-cli}/bin/*.dll $out/bin/
+    cp -n ${glasgowPkgs.sigrok-cli}/bin/*.exe $out/bin/
+
     # PXView.
     cp -n ${glasgowPkgs.pxview}/bin/* $out/bin/
     cp -r ${glasgowPkgs.pxview}/share/PXView/ $out/share/
-    cp -r ${pkgs.qt6}/plugins/* $out/bin/
 
-    # PXView needs Qt6Svg, which isn't grabbed by default.
+    # Qt 6 plugins and libraries.
     cp -r ${pkgs.qt6}/bin/Qt6Svg.dll $out/bin/
+    cp -r ${pkgs.qt6}/plugins/* $out/bin/
 
     # Grab the bits of libsigrok that PXView leaves lying around in share.
     # We need to do this since we ship both PXView and PulseView and we don't want them to fight.
