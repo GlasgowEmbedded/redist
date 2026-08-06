@@ -27,16 +27,19 @@
             <MediaTemplate EmbedCab="no" CompressionLevel="none"/>
         <?endif?>
 
+        <!-- All checks are bypassable -->
+        <Property Id="FORCEINSTALL" Value="0"/>
+
         <!-- MSI bitness must match host -->
         <?if "$(var.Platform)" = "x64" ?>
-            <Launch Condition="VersionNT64" Message="!(loc.x86VersionRequired)"/>
+            <Launch Condition="Installed OR VersionNT64 OR (FORCEINSTALL > 0)" Message="!(loc.x86VersionRequired)"/>
         <?endif?>
         <?if "$(var.Platform)" = "x86" ?>
-            <Launch Condition="NOT VersionNT64" Message="!(loc.x64VersionRequired)"/>
+            <Launch Condition="Installed OR (NOT VersionNT64) OR (FORCEINSTALL > 0)" Message="!(loc.x64VersionRequired)"/>
         <?endif?>
 
         <!-- Windows 7 SP1 or later -->
-        <Launch Condition="Installed OR (VersionNT > 601) OR ((VersionNT = 601) AND (WindowsBuild >= 7100) AND (ServicePackLevel >= 1))" Message="!(loc.OperatingSystemTooOld)"/>
+        <Launch Condition="Installed OR (VersionNT > 601) OR ((VersionNT = 601) AND (WindowsBuild >= 7100) AND (ServicePackLevel >= 1)) OR (FORCEINSTALL > 0)" Message="!(loc.OperatingSystemTooOld)"/>
 
         <!-- Uninstall other versions. https://docs.firegiant.com/wix/schema/wxs/majorupgrade/ -->
         <MajorUpgrade AllowDowngrades="yes"/>
