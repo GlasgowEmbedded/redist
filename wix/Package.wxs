@@ -10,14 +10,16 @@
         redistributable, but nothing in MSI enforces it to be unique.
     -->
     <?define UpgradeCode = "7e62b400-07e1-4863-bead-bc9f6652c76d" ?>
-    <?define AppVersion = "0.1" ?>
-    <?define AppGitShort = "$(env.GLASGOW_GIT_SHORT)" ?>
+    <?define InstallerVersion = "$(env.PRODUCT_VERSION)" ?>
+    <?define InstallerGitHash = "$(env.PRODUCT_GIT_HASH)" ?>
+    <?define GlasgowVersion = "$(env.GLASGOW_VERSION)" ?>
+    <?define GlasgowGitHash = "$(env.GLASGOW_GIT_HASH)" ?>
 
     <Package
         UpgradeCode="$(var.UpgradeCode)"
         Manufacturer="!(loc.Manufacturer)"
         Name="!(loc.PackageName)"
-        Version="$(var.AppVersion)"
+        Version="$(var.GlasgowVersion).$(var.InstallerVersion)"
         Codepage="UTF-8"
     >
         <!-- Embed cabinet file and compress it (in Release builds only) -->
@@ -48,7 +50,8 @@
         <!-- Branding -->
         <Icon Id="AppIcon" SourceFile="res\glasgow.ico"/>
         <Property Id="ARPPRODUCTICON" Value="AppIcon"/>
-        <Property Id="FullVersion" Value="v$(var.AppVersion)+g$(var.AppGitShort)"/>
+        <Property Id="ARPCOMMENTS" Value="windows-dist@$(var.InstallerGitHash)"/>
+        <Property Id="FullVersion" Value="v$(var.GlasgowVersion)+g$(var.GlasgowGitHash)"/>
 
         <!-- Features -->
         <Feature Id="MainFeature">

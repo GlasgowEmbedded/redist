@@ -64,12 +64,16 @@
 
         glasgow-installer-win32 = pkgs.callPackage ./nix/pkgs/installer {
           glasgow-arch = "x86";
+          flake-rev = (self.shortRev or self.dirtyShortRev or "unknown");
+          flake-revCount = (self.revCount or 9999);
           inherit (win32Pkgs.glasgowPkgs) glasgow-dist;
           inherit (win64Pkgs.glasgowPkgs) celt;
         };
 
         glasgow-installer-win64 = pkgs.callPackage ./nix/pkgs/installer {
           glasgow-arch = "x64";
+          flake-rev = (self.shortRev or self.dirtyShortRev or "unknown");
+          flake-revCount = (self.revCount or 9999);
           inherit (win64Pkgs.glasgowPkgs) glasgow-dist;
           inherit (win64Pkgs.glasgowPkgs) celt;
         };

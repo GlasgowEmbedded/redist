@@ -13,6 +13,8 @@
   glasgow-arch,
   glasgow-dist,
   glasgow-type ? "Release",
+  flake-rev,
+  flake-revCount,
 }:
 
 let
@@ -35,9 +37,12 @@ runCommand "build-installer"
   ''
     export DOTNET_CLI_TELEMETRY_OPTOUT=1
     export FONTCONFIG_FILE=$PWD/fc.conf
-    export GLASGOW_GIT_SHORT=${builtins.substring 0 7 glasgowPkgs.glasgow.src.rev}
+    export GLASGOW_GIT_HASH=${builtins.substring 0 7 glasgowPkgs.glasgow.src.rev}
+    export GLASGOW_VERSION=${glasgowPkgs.glasgow.version}
     export HOME=$TMP
     export LANG=en_US.UTF-8
+    export PRODUCT_GIT_HASH=${flake-rev}
+    export PRODUCT_VERSION=${toString flake-revCount}
     export PXVIEW_VERSION=${glasgowPkgs.pxview.version}
     export PYTHON_VERSION=${glasgowPkgs.python.version}
     export PULSEVIEW_VERSION=${glasgowPkgs.pulseview.version}
