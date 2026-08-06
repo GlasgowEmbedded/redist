@@ -18,7 +18,7 @@
    <String Id="PXViewShortcutName" Value="PXView $(env.PXVIEW_VERSION)"/>
    <String Id="PXViewShortcutDescription" Value="Launch PXView, a logic analyzer frontend."/>
 
-   <String Id="PythonIDLEShortcutName" Value="IDLE Shell $(env.PYTHON_VERSION)"/>
+   <String Id="PythonIDLEShortcutName" Value="Python $(env.PYTHON_VERSION) IDLE"/>
    <String Id="PythonIDLEShortcutDescription" Value="Launch IDLE, Python's Integrated Development and Learning Environment."/>
 
    <String Id="ManualShortcutName" Value="Open manual"/>

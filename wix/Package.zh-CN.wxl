@@ -18,8 +18,8 @@
    <String Id="PXViewShortcutName" Value="PXView $(env.PXVIEW_VERSION)"/>
    <String Id="PXViewShortcutDescription" Value="Launch PXView, a logic analyzer frontend."/>
 
-   <String Id="PythonIDLEShortcutName" Value="IDLE Shell $(env.PYTHON_VERSION)"/>
-	   <String Id="PythonIDLEShortcutDescription" Value="启动 IDLE，Python 所内置的开发与学习环境。"/>
+   <String Id="PythonIDLEShortcutName" Value="Python $(env.PYTHON_VERSION) IDLE"/>
+	<String Id="PythonIDLEShortcutDescription" Value="启动 IDLE，Python 所内置的开发与学习环境。"/>
 
    <String Id="ManualShortcutName" Value="打开手册"/>
    <String Id="ManualShortcutDescription" Value="在默认的网页浏览器中打开 Glasgow 可重构数字接口调试器手册"/>
