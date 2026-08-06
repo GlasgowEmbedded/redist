@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      signBinaries:
+        description: "Upload binaries to SignPath"
+        required: true
+        type: boolean
+        default: false
+      signingPolicy:
+        description: "Signing policy slug: test-signing or release-signing"
+        required: true
+        type: string
+        default: test-signing
+
+jobs:
+  build:
+    runs-on: nixos-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          cat >/etc/nix/nix.conf <<EOF
+          experimental-features = flakes nix-command
+
+          cores = 0
+          max-jobs = auto
+          EOF
+
+          nix profile add nixpkgs#{nodejs,zip}
+      - name: Check out source code
+        uses: https://code.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Build MSI installers
+        run: |
+          nix build .#glasgow-installers --accept-flake-config --print-build-logs
+          zip -j GlasgowInterfaceExplorer.zip result/*.msi
+      - name: Upload to Forgejo
+        uses: https://code.forgejo.org/forgejo/upload-artifact@16871d9e8cfcf27ff31822cac382bbb5450f1e1e # v4
+        with:
+          name: msi-installer-unsigned
+          path: GlasgowInterfaceExplorer.zip
+          retention-days: 1
+          compression-level: 0
+      - if: ${{ forgejo.event.inputs.signBinaries }}
+        name: Upload to SignPath
+        run: |
+          curl -D response.txt \
+            -H "Authorization: Bearer ${{ secrets.SIGNPATH_TOKEN }}" \
+            -F "projectSlug=glasgow" \
+            -F "signingPolicySlug=${{ forgejo.event.inputs.signingPolicy }}" \
+            -F "artifactConfigurationSlug=Windows_MSI" \
+            -F "artifact=@GlasgowInterfaceExplorer.zip" \
+            -F "parameters.productVersion=0.1" \
+            https://app.signpath.io/API/v1/${{ vars.SIGNPATH_ORG }}/SigningRequests/SubmitWithArtifact
+          sed <response.txt 's,\r,,'  | grep -oP 'location: \K.+' | tee "$GITHUB_OUTPUT"
