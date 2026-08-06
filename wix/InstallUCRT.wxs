@@ -1,7 +1,11 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
     <Fragment>
         <ComponentGroup Id="InstallUCRT">
-            <Files Directory="INSTALLFOLDER_bin" Include="ucrt/$(var.Platform)/*.dll"/>
+            <Files
+                Directory="INSTALLFOLDER"
+                Subdirectory="bin"
+                Include="ucrt/$(var.Platform)/*.dll"
+            />
         </ComponentGroup>
     </Fragment>
 </Wix>
