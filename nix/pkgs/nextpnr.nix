@@ -20,8 +20,8 @@ let
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "nextpnr";
-    rev = "68c1acd80aa8d91f6cf8525d4bffb77938f9af9b";
-    hash = "sha256-4l8ZFySiNVVJIAtMoRC8LRikoGC/9TpZY0NAgpZe+D8=";
+    rev = "de8cd9782f8ee8f07b3fd1691ae61661b1d9528e";
+    hash = "sha256-ytZTHdBA7n1DQ4cKheumwTCdiS7+JzPKEmKU6XmP6CQ=";
   };
 
   bba = buildPackages.stdenv.mkDerivation {

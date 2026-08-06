@@ -18,8 +18,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "${pname}";
-    rev = "56bb17047cd8b062f784de8666ceb3f90f77f77a";
-    hash = "sha256-udsFVt8d1eJGdyDLMbDHqzq1ACFxyfw+FHvOk83Ke60=";
+    rev = "eb47bd6e9cf2365d11ef10df3128f956f4fb8550";
+    hash = "sha256-pRqURk9jmRWB6qZuKHzryNRn98vbZy5RCHt5ID6VXXc=";
     fetchSubmodules = true;
   };
 
