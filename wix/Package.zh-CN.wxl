@@ -13,20 +13,20 @@
    <String Id="AppShortcutDescription" Value="启动一个 Glasgow 可重构数字接口调试器工具可用的终端"/>
 
    <String Id="PulseViewShortcutName" Value="PulseView $(env.PULSEVIEW_VERSION)"/>
-   <String Id="PulseViewShortcutDescription" Value="Launch PulseView, a logic analyzer frontend."/>
+   <String Id="PulseViewShortcutDescription" Value="启动 PulseView 逻辑分析仪前端。"/>
 
    <String Id="PXViewShortcutName" Value="PXView $(env.PXVIEW_VERSION)"/>
-   <String Id="PXViewShortcutDescription" Value="Launch PXView, a logic analyzer frontend."/>
+   <String Id="PXViewShortcutDescription" Value="启动 PXView 逻辑分析仪前端。"/>
 
    <String Id="PythonIDLEShortcutName" Value="Python $(env.PYTHON_VERSION) IDLE"/>
 	<String Id="PythonIDLEShortcutDescription" Value="启动 IDLE，Python 所内置的开发与学习环境。"/>
 
    <String Id="ManualShortcutName" Value="打开手册"/>
-   <String Id="ManualShortcutDescription" Value="在默认的网页浏览器中打开 Glasgow 可重构数字接口调试器手册"/>
+   <String Id="ManualShortcutDescription" Value="在默认的网页浏览器中打开 Glasgow 可重构数字接口调试器手册。"/>
    <String Id="ManualLocale" Value="zh"/>
 
    <String Id="UninstallShortcutName" Value="卸载"/>
-   <String Id="UninstallShortcutDescription" Value="从本计算机移除 Glasgow 可重构数字接口调试器工具链"/>
+   <String Id="UninstallShortcutDescription" Value="从本计算机移除 Glasgow 可重构数字接口调试器工具链。"/>
 
    <String Id="InstallingWheels" Value="安装 Python 软件包"/>
    <String Id="UninstallingWheels" Value="卸载 Python 软件包"/>
