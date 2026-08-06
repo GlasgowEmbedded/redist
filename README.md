@@ -5,6 +5,8 @@ This repository integrates all of the parts necessary to create an MSI redistrib
 * Cross-compiling every dependency with MinGW (separately for 32-bit and 64-bit Windows):
     * Python 3.14 (patched to run on Windows 7) with Tcl/Tk;
     * Yosys, icestorm, prjtrellis, and nextpnr (trimmed down to only the FPGAs used in Glasgow);
+    * Qt 6.8.3 (patched to run on Windows 7);
+    * PulseView and PXView;
     * libusb.
 * Building the Glasgow manual;
 * Collecting Python dependencies from the Glasgow lockfile;
