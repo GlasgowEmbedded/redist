@@ -56,18 +56,18 @@
             Return="ignore"
         />
 
-        <!-- Allow running as `msiexec /x glasogw.msi RunPip=0` to skip the pip actions -->
-        <Property Id="RunPip" Value="1"/>
+        <!-- Allow running as `msiexec /x glasogw.msi RUNPIP=0` to skip the pip actions -->
+        <Property Id="RUNPIP" Value="1"/>
         <InstallExecuteSequence>
             <Custom
                 Action="InstallWheels"
                 Before="InstallFinalize"
-                Condition="(NOT Installed OR REINSTALL) AND (RunPip = 1)"
+                Condition="(NOT Installed OR REINSTALL) AND (RUNPIP = 1)"
             />
             <Custom
                 Action="UninstallWheels"
                 After="InstallInitialize"
-                Condition="(Installed AND NOT REINSTALL) AND (RunPip = 1)"
+                Condition="(Installed AND NOT REINSTALL) AND (RUNPIP = 1)"
             />
         </InstallExecuteSequence>
 
