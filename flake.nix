@@ -83,6 +83,10 @@
         glasgow-installers = pkgs.callPackage ./nix/pkgs/installer/bundle.nix {
           inherit glasgow-installer-win32 glasgow-installer-win64;
         };
+
+        website-dl = pkgs.callPackage ./nix/pkgs/website-dl.nix {
+          inherit glasgow-installers;
+        };
       in
       {
         formatter = pkgs.nixfmt-tree;
@@ -98,6 +102,7 @@
             glasgow-installer-win32
             glasgow-installer-win64
             glasgow-installers
+            website-dl
             pkgs
             ;
         };
