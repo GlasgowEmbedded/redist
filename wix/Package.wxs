@@ -62,6 +62,7 @@
         </Feature>
 
         <!-- Custom actions -->
+        <CustomActionRef Id="ShowBackground"/>
         <CustomActionRef Id="InstallWheels"/>
 
         <!-- UI -->

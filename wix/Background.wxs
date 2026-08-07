@@ -1,0 +1,22 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <Binary Id="InstallSword" SourceFile="sword\InstallSword.exe"/>
+        <CustomAction
+            Id="ShowBackground"
+            BinaryRef="InstallSword"
+            ExeCommand='"!(loc.PackageName)" "!(loc.ProductName)"'
+            Return="asyncNoWait"
+        />
+
+        <Property Id="RETROBG" Value="1"/>
+        <InstallUISequence>
+            <!--
+                The InstallSword executable installs an out-of-context hook listening for window
+                events, and closes automatically once all installer windows are closed. This is
+                by far the most reasonable way to implement this, as MSI doesn't really let you
+                load a DLL into the process with the GUI using custom actions.
+            -->
+            <Custom Action="ShowBackground" After="LaunchConditions" Condition="RETROBG > 0"/>
+        </InstallUISequence>
+    </Fragment>
+</Wix>

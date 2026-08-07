@@ -52,6 +52,8 @@
 
                 celt = self.callPackage ./nix/pkgs/celt.nix { };
 
+                installsword = self.callPackage ./nix/pkgs/installer/installsword.nix { };
+
                 extract-licences = self.callPackage ./nix/lib/licences.nix { };
                 glasgow-dist = self.callPackage ./nix/pkgs/glasgow-dist.nix { };
               });
@@ -66,7 +68,7 @@
           glasgow-arch = "x86";
           flake-rev = (self.shortRev or self.dirtyShortRev or "unknown");
           flake-revCount = (self.revCount or 9999);
-          inherit (win32Pkgs.glasgowPkgs) glasgow-dist;
+          inherit (win32Pkgs.glasgowPkgs) glasgow-dist installsword;
           inherit (win64Pkgs.glasgowPkgs) celt;
         };
 
@@ -74,7 +76,7 @@
           glasgow-arch = "x64";
           flake-rev = (self.shortRev or self.dirtyShortRev or "unknown");
           flake-revCount = (self.revCount or 9999);
-          inherit (win64Pkgs.glasgowPkgs) glasgow-dist;
+          inherit (win64Pkgs.glasgowPkgs) glasgow-dist installsword;
           inherit (win64Pkgs.glasgowPkgs) celt;
         };
 

@@ -6,6 +6,7 @@
   fetchzip,
   glasgowPkgs,
   glibcLocales,
+  installsword,
   python3,
   runCommand,
   wine64,
@@ -72,6 +73,9 @@ runCommand "build-installer"
     cp -r ${../../../wix}/ wix/
     chmod -R +w wix/
     cd wix/
+
+    # Build the retro background effect.
+    cp -n ${installsword}/bin/* sword/
 
     # Install DLLs for wine.
     cp tools/*.dll $HOME/.wine/drive_c/windows/system32/
