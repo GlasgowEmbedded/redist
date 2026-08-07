@@ -72,5 +72,5 @@ jobs:
       - if: ${{ forgejo.event.inputs.publishBinaries == 'true' }}
         name: Upload to https://dl.glasgow-embedded.*/
         run: |
-          ./git-pages-cli https://dl.glasgow-embedded.org/ --token ${{ forgejo.token }} --upload-dir result
-          ./git-pages-cli https://dl.glasgow-embedded.cn/  --token ${{ forgejo.token }} --upload-dir result
+          ./git-pages-cli http://dl.glasgow-embedded.org/ --token ${{ forgejo.token }} --upload-dir result
+          ./git-pages-cli http://dl.glasgow-embedded.cn/  --token ${{ forgejo.token }} --upload-dir result
