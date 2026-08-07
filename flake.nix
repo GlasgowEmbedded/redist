@@ -10,7 +10,7 @@
     ];
 
     extra-trusted-public-keys = [
-      "bin:boRn4bvf6UU8reNd90c1fkSghRYqYHIqB6HzArN51fw="
+      "bin:80gf0YiO7eVPNP6nYSZSfK7zySg3PzU4xeCgWGNyxas="
     ];
   };
 
