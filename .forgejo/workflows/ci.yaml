@@ -63,16 +63,14 @@ jobs:
           signingRequestId=$(sed <response.txt 's,\r,,' | grep -oP 'Location: \K.+')
           echo "signingRequestId=${signingRequestId}" >>"$GITHUB_OUTPUT"
       - if: ${{ forgejo.event.inputs.publishBinaries == 'true' }}
-        name: Upload to https://dl.glasgow-embedded.org/
-        uses: actions/git-pages@d4abb9c060b59f3e557d4beb72b9b767ff3bb678
-        with:
-          site: https://dl.glasgow-embedded.org/
-          token: ${{ forgejo.token }}
-          source: result
+        name: Download git-pages-cli
+        run: |
+          curl -O https://codeberg.org/git-pages/git-pages-cli/releases/download/v1.10.1/git-pages-cli.linux-amd64
+          sha256sum -c <<<"82fbb45e67a5feb570ae323cd4959d9c47987813290728dfa8a32c62d6510766  git-pages-cli.linux-amd64"
+          mv git-pages-cli.linux-amd64 git-pages-cli
+          chmod +x git-pages-cli
       - if: ${{ forgejo.event.inputs.publishBinaries == 'true' }}
-        name: Upload to https://dl.glasgow-embedded.cn/
-        uses: actions/git-pages@d4abb9c060b59f3e557d4beb72b9b767ff3bb678
-        with:
-          site: https://dl.glasgow-embedded.cn/
-          token: ${{ forgejo.token }}
-          source: result
+        name: Upload to https://dl.glasgow-embedded.*/
+        run: |
+          ./git-pages-cli https://dl.glasgow-embedded.org/ --token ${{ forgejo.token }} --upload-dir result
+          ./git-pages-cli https://dl.glasgow-embedded.cn/  --token ${{ forgejo.token }} --upload-dir result
