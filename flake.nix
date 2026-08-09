@@ -38,10 +38,10 @@
                 manual = self.callPackage ./nix/pkgs/glasgow/manual.nix { };
                 wheels = self.callPackage ./nix/pkgs/glasgow/wheels.nix { };
 
-                icestorm = self.callPackage ./nix/pkgs/icestorm.nix { };
-                nextpnr = self.callPackage ./nix/pkgs/nextpnr.nix { };
-                prjtrellis = self.callPackage ./nix/pkgs/prjtrellis.nix { };
-                yosys = self.callPackage ./nix/pkgs/yosys.nix { };
+                icestorm = self.callPackage ./nix/pkgs/toolchain/icestorm.nix { };
+                nextpnr = self.callPackage ./nix/pkgs/toolchain/nextpnr.nix { };
+                prjtrellis = self.callPackage ./nix/pkgs/toolchain/prjtrellis.nix { };
+                yosys = self.callPackage ./nix/pkgs/toolchain/yosys.nix { };
 
                 libsigrok = self.callPackage ./nix/pkgs/sigrok/libsigrok.nix { };
                 libsigrokdecode = self.callPackage ./nix/pkgs/sigrok/libsigrokdecode.nix { };
