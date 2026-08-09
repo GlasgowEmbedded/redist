@@ -16,12 +16,12 @@
 }:
 
 let
-  version = "0.10";
+  version = "0.11";
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "nextpnr";
-    rev = "de8cd9782f8ee8f07b3fd1691ae61661b1d9528e";
-    hash = "sha256-ytZTHdBA7n1DQ4cKheumwTCdiS7+JzPKEmKU6XmP6CQ=";
+    rev = "nextpnr-${version}";
+    hash = "sha256-mCB/myasr3+esrN4xg+GCU7k/C+SSy4opVl+lmm4nH4=";
   };
 
   bba = buildPackages.stdenv.mkDerivation {
