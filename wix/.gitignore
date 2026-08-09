@@ -1,0 +1,5 @@
+/.wine/
+/bin/
+/obj/
+/sword/*.o
+/sword/*.exe

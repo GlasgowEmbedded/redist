@@ -1,2 +1,3 @@
 InstallSword.exe:
-	$(CC) -o InstallSword.exe InstallSword.c -D_UNICODE -municode -mwindows -lgdi32
+	$(WINDRES) -o icon.o icon.rc
+	$(CC) -o $@ main.c icon.o -D_UNICODE -municode -mwindows -lgdi32

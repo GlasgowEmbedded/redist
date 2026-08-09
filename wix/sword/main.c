@@ -102,6 +102,8 @@ LPTSTR pchMatchTitle = _T("");
 HWND hBackgroundWnd = NULL;
 HWND hChildren[256];
 int nChildren = 0;
+// We activate the last window in creation order when the background is clicked.
+int iNextChild = 0;
 
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -114,6 +116,17 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
             EndPaint(hWnd, &ps);
             return 0;
         }
+
+        case WM_ACTIVATE:
+            if (LOWORD(wParam) != WA_INACTIVE) {
+                for (int i = sizeof(hChildren) / sizeof(HWND) - 1; i >= 0; i--) {
+                    if (hChildren[i] != NULL) {
+                        SetForegroundWindow(hChildren[i]);
+                        break;
+                    }
+                }
+            }
+            break;
 
         case WM_CLOSE:
             DestroyWindow(hWnd);
@@ -146,12 +159,13 @@ BOOL CALLBACK CheckAndReparentWindow(HWND hWnd, LPARAM lParam)
         return TRUE;
 
     SetParent(hWnd, hBackgroundWnd);
-    for (int i = 0; i < sizeof(hChildren) / sizeof(HWND); i++) {
-        if (hChildren[i] == NULL) {
-            hChildren[i] = hWnd;
-            nChildren++;
-            break;
-        }
+
+    for (int i = 0; i < sizeof(hChildren) / sizeof(HWND); i++)
+        if (hChildren[i] == hWnd)
+            return TRUE;
+    if (iNextChild < sizeof(hChildren) / sizeof(HWND)) {
+        hChildren[iNextChild++] = hWnd;
+        nChildren++;
     }
     return TRUE;
 }
@@ -200,13 +214,19 @@ int WINAPI _tWinMain(
     wc.lpszClassName = _T("InstallSword_Main");
     wc.lpfnWndProc = MainWndProc;
     wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
+    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(100));
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     if (!RegisterClass(&wc))
         return FALSE;
 
-    hBackgroundWnd = CreateWindowEx(WS_EX_NOACTIVATE|WS_EX_TOPMOST, wc.lpszClassName, 0,
+    RECT rcWorkArea;
+    if (!SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWorkArea, 0))
+        rcWorkArea = (RECT){0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
+
+    hBackgroundWnd = CreateWindowEx(0, wc.lpszClassName, pchMatchTitle,
         WS_POPUP|WS_CLIPCHILDREN|WS_CLIPSIBLINGS|WS_GROUP,
-        0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+        rcWorkArea.left, rcWorkArea.top,
+        rcWorkArea.right - rcWorkArea.left, rcWorkArea.bottom - rcWorkArea.top,
         NULL, NULL, NULL, 0);
     if (!hBackgroundWnd)
         return FALSE;
