@@ -54,7 +54,14 @@ stdenv.mkDerivation rec {
     (lib.cmakeFeature "QT_HOST_PATH" "${qtEnv}")
 
     (lib.cmakeBool "BUILD_qtdeclarative" false)
-    (lib.cmakeFeature "QT_BUILD_SUBMODULES" "qtbase;qtsvg;qtwebsockets")
+    (lib.cmakeFeature "QT_BUILD_SUBMODULES" "qtbase;qtimageformats;qtsvg;qtwebsockets")
+
+    (lib.cmakeBool "FEATURE_gif" true)
+    (lib.cmakeBool "FEATURE_ico" true)
+    (lib.cmakeBool "FEATURE_jpeg" true)
+    (lib.cmakeBool "FEATURE_png" true)
+    (lib.cmakeBool "FEATURE_tiff" true)
+    (lib.cmakeBool "FEATURE_webp" true)
   ];
 
   enableParallelBuilding = true;
