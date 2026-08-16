@@ -29,7 +29,7 @@ stdenvNoCC.mkDerivation {
     source .venv/bin/activate
 
     for f in ${wheels}/*.whl ${glasgowPkgs.wheels}/*.whl; do
-      python -m pip install --no-deps $f
+      python -m pip install --no-cache-dir --no-deps $f
     done
 
     export HOME=$TMP

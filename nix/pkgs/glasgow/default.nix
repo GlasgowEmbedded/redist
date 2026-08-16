@@ -24,6 +24,6 @@ stdenvNoCC.mkDerivation {
 
   buildPhase = ''
     export PDM_BUILD_SCM_VERSION="${version}.dev0+g${builtins.substring 0 7 src.rev}"
-    python -m pip wheel --no-build-isolation --no-deps ./software --wheel-dir $out
+    python -m pip wheel --no-build-isolation --no-cache-dir --no-deps ./software --wheel-dir $out
   '';
 }
