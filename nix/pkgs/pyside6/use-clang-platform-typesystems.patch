@@ -1,0 +1,59 @@
+From dd38a3d56913beeeeeadf64efa8435b057225300 Mon Sep 17 00:00:00 2001
+From: bin <bin@sleepy.rs>
+Date: Sat, 15 Aug 2026 20:29:15 +0100
+Subject: Use Clang platform when parsing typesystems.
+
+---
+ .../ApiExtractor/conditionalstreamreader.cpp  | 29 ++++++++++++-------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/sources/shiboken6/ApiExtractor/conditionalstreamreader.cpp b/sources/shiboken6/ApiExtractor/conditionalstreamreader.cpp
+index 18b4488c3..418d6f3a0 100644
+--- a/sources/shiboken6/ApiExtractor/conditionalstreamreader.cpp
++++ b/sources/shiboken6/ApiExtractor/conditionalstreamreader.cpp
+@@ -3,6 +3,8 @@
+ 
+ #include "conditionalstreamreader.h"
+ 
++#include <clangparser/compilersupport.h>
++
+ #include <QtCore/QDebug>
+ #include <QtCore/QHash>
+ 
+@@ -164,17 +166,22 @@ void ConditionalStreamReader::setConditions(const QStringList &newConditions)
+ QStringList ConditionalStreamReader::platformConditions()
+ {
+     QStringList result;
+-#if defined (Q_OS_UNIX)
+-    result << "unix"_L1;
+-#endif
+-
+-#if defined (Q_OS_LINUX)
+-    result << "linux"_L1;
+-#elif defined (Q_OS_MACOS)
+-    result << "darwin"_L1;
+-#elif defined (Q_OS_WINDOWS)
+-    result << "windows"_L1;
+-#endif
++
++    switch (clang::platform()) {
++        case Platform::macOS:
++            result << "darwin"_L1;
++            break;
++
++        case Platform::Windows:
++            result << "windows"_L1;
++            break;
++
++        case Platform::Unix:
++            result << "unix"_L1;
++            result << "linux"_L1;
++            break;
++    }
++
+     return result;
+ }
+ 
+-- 
+2.54.0
+

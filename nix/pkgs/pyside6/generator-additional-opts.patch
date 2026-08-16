@@ -1,0 +1,63 @@
+From af9b164c3d962aa96ea671a2b7180b6d2ba92814 Mon Sep 17 00:00:00 2001
+From: bin <bin@sleepy.rs>
+Date: Sat, 15 Aug 2026 08:11:26 +0100
+Subject: Add Nix patch for finding headers and permit passing additional
+ compiler options.
+
+---
+ .../clangparser/compilersupport.cpp           | 20 ++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/sources/shiboken6/ApiExtractor/clangparser/compilersupport.cpp b/sources/shiboken6/ApiExtractor/clangparser/compilersupport.cpp
+index 05d1f8511..079e5ab32 100644
+--- a/sources/shiboken6/ApiExtractor/clangparser/compilersupport.cpp
++++ b/sources/shiboken6/ApiExtractor/clangparser/compilersupport.cpp
+@@ -17,6 +17,7 @@
+ #include <QtCore/QStandardPaths>
+ #include <QtCore/QStringList>
+ #include <QtCore/QVersionNumber>
++#include <QtCore/QRegularExpression>
+ 
+ #include <clang-c/Index.h>
+ 
+@@ -378,6 +379,9 @@ QByteArrayList emulatedCompilerOptions(LanguageLevel level)
+ {
+     QByteArrayList result;
+     HeaderPaths headerPaths;
++
++    QRegularExpression qtHeaderRegex(uR"(/[0-9a-z]{32}-qt[a-z0-9]+-)"_s);
++
+     switch (compiler()) {
+     case Compiler::Msvc:
+         result.append("-fms-compatibility-version="_ba + msvcCompatVersion());
+@@ -402,12 +406,26 @@ QByteArrayList emulatedCompilerOptions(LanguageLevel level)
+         // <type_traits> etc (g++ 11.3).
+         const HeaderPaths gppPaths = gppInternalIncludePaths(compilerFromCMake(u"g++"_s));
+         for (const HeaderPath &h : gppPaths) {
+-            if (h.path.contains("c++") || h.path.contains("sysroot"))
++            auto match = qtHeaderRegex.match(QString::fromUtf8(h.path));
++            if (!match.hasMatch()) {
+                 headerPaths.append(h);
++            } else {
++                headerPaths.append({h.path, HeaderType::Standard});
++            }
+         }
++
+         break;
+     }
+ 
++    QByteArray additionalOpts = qgetenv("SHIBOKEN_ADDITIONAL_COMPILER_OPTS");
++    if (!additionalOpts.isEmpty()) {
++        if ((additionalOpts.startsWith('"') && additionalOpts.endsWith('"')) ||
++            (additionalOpts.startsWith("'") && additionalOpts.endsWith("'")))
++            additionalOpts = additionalOpts.mid(1, additionalOpts.length() - 2);
++
++        result.append(additionalOpts.split(' '));
++    }
++
+     std::transform(headerPaths.cbegin(), headerPaths.cend(),
+                    std::back_inserter(result), HeaderPath::includeOption);
+     return result;
+-- 
+2.54.0
+

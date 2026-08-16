@@ -1,0 +1,27 @@
+From 5354f1193a8485f6e526a4bf3c63694fcf0f28a1 Mon Sep 17 00:00:00 2001
+From: bin <bin@sleepy.rs>
+Date: Sat, 15 Aug 2026 09:27:59 +0100
+Subject: Force OS to be Windows.
+
+---
+ sources/pyside6/cmake/PySideSetup.cmake | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sources/pyside6/cmake/PySideSetup.cmake b/sources/pyside6/cmake/PySideSetup.cmake
+index 34ec035b7..36f148a0c 100644
+--- a/sources/pyside6/cmake/PySideSetup.cmake
++++ b/sources/pyside6/cmake/PySideSetup.cmake
+@@ -201,7 +201,9 @@ endif()
+ # no more supported: include(${QT_USE_FILE})
+ 
+ # Configure OS support
+-check_os()
++set(ENABLE_UNIX "0")
++set(ENABLE_MAC "0")
++set(ENABLE_WIN "1")
+ 
+ # Define supported Qt Version
+ set(SUPPORTED_QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
+-- 
+2.54.0
+

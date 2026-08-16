@@ -1,26 +1,15 @@
 {
-  buildPackages,
   cmake,
   fetchzip,
   lib,
   python3,
   ninja,
+  qtPkgs,
   stdenv,
   writeText,
 }:
 
 let
-  # Used for Qt 6.8.3.
-  qtPkgs =
-    import
-      (fetchTarball {
-        url = "https://github.com/NixOS/nixpkgs/archive/d27c0d08ef25912c134b755d40a1bd1d843bfb7c.tar.gz";
-        sha256 = "sha256:070y6magaf3500s7fmp3s536bllzk56c0qbjhr8snsisgvjj98xj";
-      })
-      {
-        inherit (buildPackages.stdenv.hostPlatform) system;
-      };
-
   qtEnv =
     with qtPkgs.qt6;
     env "qt6" [
@@ -57,6 +46,7 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./0001-Patches-for-Windows-7-compatibility.patch
+    ./010-export-some-constexpr-variables.patch
   ];
 
   cmakeFlags = [

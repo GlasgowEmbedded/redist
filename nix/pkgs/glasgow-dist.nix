@@ -47,7 +47,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
-  version = "2026-08-05";
+  version = "2026-08-16";
 
   phases = [ "installPhase" ];
 
@@ -139,6 +139,10 @@ stdenv.mkDerivation {
     chmod -R +w $out/share/PXView
     cp -r ${glasgowPkgs.pxview}/share/libsigrokdecode/decoders/ $out/share/PXView/
     cp ${glasgowPkgs.pxview}/share/sigrok-firmware/* $out/share/PXView/res/
+
+    # PySide6!
+    cp -n ${glasgowPkgs.pyside6}/bin/*.dll $out/bin/
+    cp -r ${glasgowPkgs.pyside6}/lib/python3* $out/lib/
 
     # Extract licences.
     mkdir $out/share/licences

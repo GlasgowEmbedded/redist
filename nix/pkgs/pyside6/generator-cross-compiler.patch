@@ -1,0 +1,34 @@
+From 03c611dba7c5fe577071217cfdaa7a7364a3ce2d Mon Sep 17 00:00:00 2001
+From: bin <bin@sleepy.rs>
+Date: Sat, 15 Aug 2026 07:46:17 +0100
+Subject: Enable specifying a different compiler to extract headers from.
+
+This is to facilitate cross-compilation with Nix.
+---
+ sources/shiboken6/ApiExtractor/CMakeLists.txt | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/sources/shiboken6/ApiExtractor/CMakeLists.txt b/sources/shiboken6/ApiExtractor/CMakeLists.txt
+index c87bf5fea..7def1f217 100644
+--- a/sources/shiboken6/ApiExtractor/CMakeLists.txt
++++ b/sources/shiboken6/ApiExtractor/CMakeLists.txt
+@@ -126,8 +126,16 @@ if (NOT DISABLE_DOCSTRINGS)
+                    qtdocparser.cpp qtdocparser.h)
+ endif()
+
++if (DEFINED CROSS_CXX_COMPILER)
++    set(CXX_COMPILER ${CROSS_CXX_COMPILER})
++else ()
++    set(CXX_COMPILER ${CMAKE_CXX_COMPILER})
++endif()
++
++message(STATUS "CXX_COMPILER set to ${CXX_COMPILER}")
++
+ target_compile_definitions(apiextractor
+-                           PRIVATE CMAKE_CXX_COMPILER="${CMAKE_CXX_COMPILER}"
++                           PRIVATE CMAKE_CXX_COMPILER="${CXX_COMPILER}"
+                            PRIVATE QT_LEAN_HEADERS=1)
+
+ set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "The subdirectory relative to the install prefix where libraries will be installed (default is /lib${LIB_SUFFIX})" FORCE)
+--
+2.54.0

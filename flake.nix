@@ -28,6 +28,17 @@
 
           overlays = [
             (final: prev: {
+              # Used for Qt 6.8.3.
+              qtPkgs =
+                import
+                  (fetchTarball {
+                    url = "https://github.com/NixOS/nixpkgs/archive/d27c0d08ef25912c134b755d40a1bd1d843bfb7c.tar.gz";
+                    sha256 = "sha256:070y6magaf3500s7fmp3s536bllzk56c0qbjhr8snsisgvjj98xj";
+                  })
+                  {
+                    inherit (final.buildPackages.stdenv.hostPlatform) system;
+                  };
+
               glasgowPkgs = final.lib.makeScope final.newScope (self: {
                 api-ms-win-core-path = self.callPackage ./nix/pkgs/api-ms-win-core-path.nix { };
                 libusb = self.callPackage ./nix/pkgs/libusb.nix { };
@@ -47,6 +58,8 @@
                 libsigrokdecode = self.callPackage ./nix/pkgs/sigrok/libsigrokdecode.nix { };
                 pulseview = self.callPackage ./nix/pkgs/sigrok/pulseview.nix { };
                 sigrok-cli = self.callPackage ./nix/pkgs/sigrok/sigrok-cli.nix { };
+
+                pyside6 = self.callPackage ./nix/pkgs/pyside6 { };
 
                 pxview = self.callPackage ./nix/pkgs/pxview.nix { };
 
