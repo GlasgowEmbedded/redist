@@ -68,7 +68,7 @@ runCommand "build-installer"
     # Set up NuGet. Remove the old source since otherwise ours gets ignored due to signature issues.
     cp -r ${wixPkgs} $HOME/.wine/drive_c/pkgs
     run_wine ${dotnet-sdk}/dotnet.exe nuget remove source nuget.org
-    run_wine ${dotnet-sdk}/dotnet.exe nuget add source 'C:\pkgs'
+    run_wine ${dotnet-sdk}/dotnet.exe nuget add source 'C:\pkgs' --name Local
 
     cp -r ${../../../wix}/ wix/
     chmod -R +w wix/
