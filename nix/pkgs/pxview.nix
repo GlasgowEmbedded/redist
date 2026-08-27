@@ -21,13 +21,13 @@
 
 stdenv.mkDerivation rec {
   pname = "PXView";
-  version = "1.5.7";
+  version = "1.5.8";
 
   src = fetchFromGitHub {
     owner = "PXLogic";
     repo = "${pname}";
     rev = "${pname}_v${version}";
-    hash = "sha256-H6SIhrf/B6L6MHGKBBd3JaPoPJ41h/Kxhl7iOVmet9A=";
+    hash = "sha256-mmIXwanilBoxNaOmfSpnlyf9nbSYYrNxWriPnqw1VNo=";
     fetchSubmodules = true;
   };
 
@@ -59,17 +59,23 @@ stdenv.mkDerivation rec {
       --replace-fail " GuiPrivate " " "
 
     # Fix headers.
-    substituteInPlace PXView/pv/submainframe.cpp \
+    substituteInPlace PXView/pv/mainwindow/submainframe.cpp \
       --replace-fail {W,w}indows.h
 
-    substituteInPlace PXView/pv/winnativewidget.h \
+    substituteInPlace PXView/pv/platform/winnativewidget.h \
       --replace-fail {W,w}indows.h \
       --replace-fail {W,w}indowsx.h
   '';
 
   cmakeFlags = [
     (lib.cmakeFeature "Python3_EXECUTABLE" "${buildPackages.python3}/bin/python")
+
+    # Some extra flags for mimalloc.
+    (lib.cmakeBool "MI_OVERRIDE" false)
+    (lib.cmakeFeature "MI_EXTRA_CPPDEFS" "MI_USE_RTLGENRANDOM=1")
   ];
 
   enableParallelBuilding = true;
+
+    __structuredAttrs = true;
 }
