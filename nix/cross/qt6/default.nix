@@ -14,8 +14,16 @@ let
     with qtPkgs.qt6;
     env "qt6" [
       qtbase
+      qtquick3d
       qtshadertools
       qttools
+
+      # We need `svgtoqml`.
+      (qtdeclarative.overrideAttrs (oldAttrs: {
+        propagatedBuildInputs = oldAttrs.propagatedBuildInputs ++ [
+          qtsvg
+        ];
+      }))
     ];
 
   toolchain = writeText "toolchain.cmake" ''
@@ -46,15 +54,15 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./0001-Patches-for-Windows-7-compatibility.patch
-    ./010-export-some-constexpr-variables.patch
+    ./qtbase-export-constexpr-variables.patch
+    ./qtmultimedia-export-constexpr-variables.patch
   ];
 
   cmakeFlags = [
     (lib.cmakeFeature "CMAKE_TOOLCHAIN_FILE" "${toolchain}")
     (lib.cmakeFeature "QT_HOST_PATH" "${qtEnv}")
 
-    (lib.cmakeBool "BUILD_qtdeclarative" false)
-    (lib.cmakeFeature "QT_BUILD_SUBMODULES" "qtbase;qtimageformats;qtsvg;qtwebsockets")
+    (lib.cmakeFeature "QT_BUILD_SUBMODULES" "qtbase;qtimageformats;qtmultimedia;qtsvg;qtwebsockets")
 
     (lib.cmakeBool "FEATURE_gif" true)
     (lib.cmakeBool "FEATURE_ico" true)

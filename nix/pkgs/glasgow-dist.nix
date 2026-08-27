@@ -47,7 +47,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
-  version = "2026-08-16";
+  version = "2026-08-27";
 
   phases = [ "installPhase" ];
 
@@ -131,8 +131,9 @@ stdenv.mkDerivation {
     cp -r ${glasgowPkgs.pxview}/share/PXView/ $out/share/
 
     # Qt 6 plugins and libraries.
-    cp -r ${pkgs.qt6}/bin/Qt6Svg.dll $out/bin/
+    cp -n ${pkgs.qt6}/bin/*.dll $out/bin/
     cp -r ${pkgs.qt6}/plugins/* $out/bin/
+    cp -r ${pkgs.qt6}/qml/ $out/bin/
 
     # Grab the bits of libsigrok that PXView leaves lying around in share.
     # We need to do this since we ship both PXView and PulseView and we don't want them to fight.

@@ -19,23 +19,15 @@
   windows,
 }:
 
-let
-  libusb' = fetchFromGitHub {
-    owner = "haikumuse";
-    repo = "libusb";
-    rev = "ab8525e12fd9639adcb6d57c3156ca5f97ae5186";
-    hash = "sha256-7DxZNwlRUT/cYQXunOgWaHDXVPu1DjyESjxQcG8eBOY=";
-  };
-in
 stdenv.mkDerivation rec {
   pname = "PXView";
-  version = "1.5.4";
+  version = "1.5.7";
 
   src = fetchFromGitHub {
     owner = "PXLogic";
     repo = "${pname}";
     rev = "${pname}_v${version}";
-    hash = "sha256-37DQ9XC63F54uY1f/m9FJPvhESyFvS9rQXA3unid6Mw=";
+    hash = "sha256-H6SIhrf/B6L6MHGKBBd3JaPoPJ41h/Kxhl7iOVmet9A=";
     fetchSubmodules = true;
   };
 
@@ -62,11 +54,6 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
-    # Temporary workaround for the libusb submodule being broken.
-    rm -r libusb
-    cp -r ${libusb'} libusb
-    chmod -R +w libusb
-
     # GuiPrivate isn't a separate module on Qt 6.8.3.
     substituteInPlace CMake/deps.cmake \
       --replace-fail " GuiPrivate " " "

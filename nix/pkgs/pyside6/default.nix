@@ -84,8 +84,6 @@ stdenv.mkDerivation  {
     (lib.cmakeBool "FORCE_LIMITED_API" false)
     (lib.cmakeBool "is_pyside6_superproject_build" true)
     (lib.cmakeFeature "SHIBOKEN_GENERATOR_EXTRA_FLAGS" "--platform=windows")
-
-    # Do not try to build DBus on Windows. (The MinGW build ships it somehow..?)
     (lib.cmakeFeature "SKIP_MODULES" "DBus")
   ];
 
