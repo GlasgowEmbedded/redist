@@ -35,7 +35,7 @@ let
 
           copied=0
           for prefix in COPYING LICENCE LICENSE LICENSE_1_0 license; do
-            for file in $SOURCES/$prefix $SOURCES/$prefix.*; do
+            for file in $SOURCES/$prefix $SOURCES/$prefix.* $SOURCES/$prefix-*; do
               if [[ -e $file ]]; then
                 cp -L -r $file $out
                 copied=$((copied + 1))

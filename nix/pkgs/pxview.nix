@@ -77,5 +77,5 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
-    __structuredAttrs = true;
+  __structuredAttrs = true;
 }

@@ -59,6 +59,9 @@
                 pulseview = self.callPackage ./nix/pkgs/sigrok/pulseview.nix { };
                 sigrok-cli = self.callPackage ./nix/pkgs/sigrok/sigrok-cli.nix { };
 
+                combase-shim = self.callPackage ./nix/pkgs/combase-shim { };
+                probe-rs = self.callPackage ./nix/pkgs/probe-rs { };
+
                 pyside6 = self.callPackage ./nix/pkgs/pyside6 { };
 
                 pxview = self.callPackage ./nix/pkgs/pxview.nix { };

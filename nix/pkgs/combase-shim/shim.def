@@ -1,0 +1,6 @@
+EXPORTS
+    CoCreateFreeThreadedMarshaler=OLE32.CoCreateFreeThreadedMarshaler
+    CoIncrementMTAUsage=OLE32.CoIncrementMTAUsage
+    CoTaskMemAlloc=OLE32.CoTaskMemAlloc
+    CoTaskMemFree=OLE32.CoTaskMemFree
+    RoGetAgileReference=OLE32.RoGetAgileReference

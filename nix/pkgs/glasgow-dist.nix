@@ -29,6 +29,8 @@ let
       prjtrellis
       yosys
 
+      probe-rs
+
       pulseview
       pxview
     ]
@@ -47,7 +49,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
-  version = "2026-08-27";
+  version = "2026-08-31";
 
   phases = [ "installPhase" ];
 
@@ -144,6 +146,10 @@ stdenv.mkDerivation {
     # PySide6!
     cp -n ${glasgowPkgs.pyside6}/bin/*.dll $out/bin/
     cp -r ${glasgowPkgs.pyside6}/lib/python3* $out/lib/
+
+    # probe-rs
+    cp -n ${glasgowPkgs.combase-shim}/bin/* $out/bin/
+    cp -n ${glasgowPkgs.probe-rs}/bin/* $out/bin/
 
     # Extract licences.
     mkdir $out/share/licences

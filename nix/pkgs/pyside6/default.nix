@@ -59,7 +59,7 @@ let
     __structuredAttrs = true;
   };
 in
-stdenv.mkDerivation  {
+stdenv.mkDerivation {
   pname = "PySide6";
   inherit src version;
 
@@ -80,7 +80,9 @@ stdenv.mkDerivation  {
   cmakeFlags = [
     (lib.cmakeFeature "QFP_PYTHON_HOST_PATH" "${pkgsBuildBuild.python3}/bin/python")
     (lib.cmakeFeature "QFP_SHIBOKEN_HOST_PATH" "${shiboken6-generator}")
-    (lib.cmakeFeature "Python_SOABI" "cp${lib.replaceString "." "" pyVersion}-mingw_${stdenv.hostPlatform.uname.processor}_ucrt_gnu")
+    (lib.cmakeFeature "Python_SOABI" "cp${
+      lib.replaceString "." "" pyVersion
+    }-mingw_${stdenv.hostPlatform.uname.processor}_ucrt_gnu")
     (lib.cmakeBool "FORCE_LIMITED_API" false)
     (lib.cmakeBool "is_pyside6_superproject_build" true)
     (lib.cmakeFeature "SHIBOKEN_GENERATOR_EXTRA_FLAGS" "--platform=windows")
