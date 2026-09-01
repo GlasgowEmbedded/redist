@@ -49,7 +49,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "glasgow-dist";
-  version = "2026-08-31";
+  version = "2026-09-01";
 
   phases = [ "installPhase" ];
 

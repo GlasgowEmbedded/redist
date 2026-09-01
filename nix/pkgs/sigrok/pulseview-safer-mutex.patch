@@ -1,0 +1,30 @@
+From be6e84b5855bbe4172d641dfd4783f5b7561e66e Mon Sep 17 00:00:00 2001
+From: bin <bin@sleepy.rs>
+Date: Tue, 1 Sep 2026 18:50:23 +0100
+Subject: Do not unlock mutex unless we know that it was locked.
+
+This technically presents a race condition where the mutex isn't
+guaranteed to be locked at this time, but there's only so much I
+can do.
+---
+ pv/data/decodesignal.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/pv/data/decodesignal.cpp b/pv/data/decodesignal.cpp
+index 9c695a1b..8ea6889d 100644
+--- a/pv/data/decodesignal.cpp
++++ b/pv/data/decodesignal.cpp
+@@ -277,7 +277,9 @@ void DecodeSignal::resume_decode()
+ {
+ 	// Manual unlocking is done before notifying, to avoid waking up the
+ 	// waiting thread only to block again (see notify_one for details)
+-	decode_pause_mutex_.unlock();
++	if (decode_paused_)
++		decode_pause_mutex_.unlock();
++
+ 	decode_pause_cond_.notify_one();
+ 	decode_paused_ = false;
+ }
+-- 
+2.54.0
+

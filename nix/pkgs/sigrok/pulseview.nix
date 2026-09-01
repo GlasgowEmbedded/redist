@@ -21,6 +21,10 @@ stdenv.mkDerivation rec {
     hash = "sha256-4K3sMCTlFnu8iiokMYc1O7jNVQ7vTtSiT2dCpLRC44s=";
   };
 
+  patches = [
+    ./pulseview-safer-mutex.patch
+  ];
+
   nativeBuildInputs = [
     cmake
     ninja
@@ -39,12 +43,10 @@ stdenv.mkDerivation rec {
     (lib.cmakeBool "STATIC_PKGDEPS_LIBS" stdenv.hostPlatform.isStatic)
   ];
 
-  patchPhase = lib.optionalString (!stdenv.hostPlatform.isStatic) ''
+  postPatch = lib.optionalString (!stdenv.hostPlatform.isStatic) ''
     sed -i \
       -e '/STATIC_PKGDEPS_LIBS TRUE/d' \
       -e '/QT_STATICPLUGIN/d' CMakeLists.txt
-
-    cat CMakeLists.txt
   '';
 
   enableParallelBuilding = true;
