@@ -19,6 +19,10 @@ stdenv.mkDerivation rec {
     autoreconfHook
   ];
 
+  configureFlags = [
+    "--enable-windows-hotplug"
+  ];
+
   dontAddDisableDepTrack = true;
 
   enableParallelBuilding = true;
