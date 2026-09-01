@@ -2,7 +2,7 @@
   autoconf-archive,
   autoreconfHook,
   doxygen,
-  fetchFromGitHub,
+  fetchFromCodeberg,
   libiconvReal,
   libftdi1,
   gettext,
@@ -17,13 +17,13 @@
 
 stdenv.mkDerivation rec {
   pname = "libsigrok";
-  version = "0.6.0";
+  version = "0.7.0";
 
-  src = fetchFromGitHub {
-    owner = "sigrokproject";
+  src = fetchFromCodeberg {
+    owner = "GlasgowEmbedded";
     repo = "${pname}";
-    rev = "0bc2487778e660f4d3116729b6f4aee2b1996bb0";
-    hash = "sha256-j79Wx5FFFKptcwtIjQ0Cvtzl46lnow6bExpMNzI8KlM=";
+    rev = "574c72f0e0c4fe488e05dde32f5bd3b992a5c517";
+    hash = "sha256-g7QX4e1gLj8z8QcUxcrB9hgdGS50u8ml1mwrddsh3JE=";
   };
 
   nativeBuildInputs = [

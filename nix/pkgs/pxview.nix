@@ -53,7 +53,10 @@ stdenv.mkDerivation rec {
     windows.pthreads
   ];
 
-  patchPhase = ''
+  postPatch = ''
+    # Copy the Glasgow driver into the source tree.
+    cp -r ${glasgowPkgs.libsigrok.src}/src/hardware/glasgow libsigrok/src/hardware/
+
     # GuiPrivate isn't a separate module on Qt 6.8.3.
     substituteInPlace CMake/deps.cmake \
       --replace-fail " GuiPrivate " " "
