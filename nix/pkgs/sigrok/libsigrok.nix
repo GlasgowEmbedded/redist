@@ -22,8 +22,8 @@ stdenv.mkDerivation rec {
   src = fetchFromCodeberg {
     owner = "GlasgowEmbedded";
     repo = "${pname}";
-    rev = "574c72f0e0c4fe488e05dde32f5bd3b992a5c517";
-    hash = "sha256-g7QX4e1gLj8z8QcUxcrB9hgdGS50u8ml1mwrddsh3JE=";
+    rev = "c97c2448ff574b0cbd0f6afc6f50143a92bbe35f";
+    hash = "sha256-OyK0iuEGME/ySHUNVVu+/2IQIl4cAgv7qWS9bkMOTbQ=";
   };
 
   nativeBuildInputs = [
