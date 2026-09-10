@@ -3,16 +3,7 @@
   overlays ? [ ],
 }:
 
-let
-  pkgs' = pkgs.applyPatches {
-    src = pkgs.path;
-
-    patches = [
-      ../patches/0001-Use-DW2-EH-when-targeting-i686-MinGW.patch
-    ];
-  };
-in
-import pkgs' {
+import pkgs.path {
   inherit (pkgs.stdenv.hostPlatform) system;
   crossSystem = {
     config = "i686-w64-mingw32";
