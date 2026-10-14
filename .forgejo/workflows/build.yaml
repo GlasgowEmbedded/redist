@@ -32,7 +32,7 @@ jobs:
           max-jobs = auto
           EOF
 
-          nix profile add nixpkgs#{coreutils-full,gnused,nodejs,zip}
+          nix profile add nixpkgs#{coreutils-full,gnused,nodejs,zip,git-pages-cli}
       - name: Check out source code
         uses: https://code.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -65,14 +65,7 @@ jobs:
           signingRequestId=$(sed <response.txt 's,\r,,' | grep -oP 'Location: \K.+')
           echo "signingRequestId=${signingRequestId}" >>"$GITHUB_OUTPUT"
       - if: ${{ forgejo.event.inputs.publishBinaries == 'true' }}
-        name: Download git-pages-cli
-        run: |
-          curl -O https://codeberg.org/git-pages/git-pages-cli/releases/download/v1.10.1/git-pages-cli.linux-amd64
-          sha256sum -c <<<"82fbb45e67a5feb570ae323cd4959d9c47987813290728dfa8a32c62d6510766  git-pages-cli.linux-amd64"
-          mv git-pages-cli.linux-amd64 git-pages-cli
-          chmod +x git-pages-cli
-      - if: ${{ forgejo.event.inputs.publishBinaries == 'true' }}
         name: Upload to https://dl.glasgow-embedded.*/
         run: |
-          ./git-pages-cli http://dl.glasgow-embedded.org/ --token ${{ forgejo.token }} --upload-dir result
-          ./git-pages-cli http://dl.glasgow-embedded.cn/  --token ${{ forgejo.token }} --upload-dir result
+          git-pages-cli http://dl.glasgow-embedded.org/ --token ${{ forgejo.token }} --upload-dir result
+          git-pages-cli http://dl.glasgow-embedded.cn/  --token ${{ forgejo.token }} --upload-dir result
