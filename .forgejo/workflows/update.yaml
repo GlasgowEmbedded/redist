@@ -1,0 +1,78 @@
+name: Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      gitRev:
+        description: "Git revision (leave empty for `main`)"
+        required: false
+        type: string
+
+jobs:
+  update:
+    runs-on: nixos-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          cat >/etc/nix/nix.conf <<EOF
+          experimental-features = flakes nix-command
+
+          cores = 0
+          max-jobs = auto
+          EOF
+
+          nix profile add nixpkgs#{nodejs,jq}
+      - name: Check out source code
+        uses: https://code.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - id: fetchGit
+        name: Compute Git revision
+        run: |
+          owner=GlasgowEmbedded
+          repo=glasgow
+          if [ -n "${{ forgejo.event.inputs.gitRev }}" ]; then
+            rev="${{ forgejo.event.inputs.gitRev }}"
+          else
+            rev=$(curl -s https://api.github.com/repos/${owner}/${repo}/commits/HEAD | jq -r .sha)
+          fi
+
+          tee $FORGEJO_OUTPUT <<EOF
+          owner=${owner}
+          repo=${repo}
+          rev=${rev}
+          url=https://github.com/${owner}/${repo}/archive/${rev}.tar.gz
+          EOF
+      - id: fetchNix
+        name: Compute Nix hash
+        run: |
+          hash=$(nix store prefetch-file --unpack --json ${{ steps.fetchGit.outputs.url }} | jq -r .hash)
+          tee $FORGEJO_OUTPUT <<EOF
+          hash=${hash}
+          EOF
+      - name: Update derivation
+        run: |
+          tee nix/pkgs/glasgow/sources.nix <<EOF
+          { fetchFromGitHub }:
+
+          fetchFromGitHub {
+            owner = "${{ steps.fetchGit.outputs.owner }}";
+            repo = "${{ steps.fetchGit.outputs.repo }}";
+            rev = "${{ steps.fetchGit.outputs.rev }}";
+            hash = "${{ steps.fetchNix.outputs.hash }}";
+          }
+          EOF
+      - id: commitNix
+        name: Commit derivation
+        run: |
+          git config user.name 'forgejo-actions'
+          git config user.email 'noreply@forgejo.org'
+          git commit --all -m 'Update Glasgow source derivation.'
+          git push
+          tee $FORGEJO_OUTPUT <<EOF
+          rev=$(git rev-parse HEAD)
+          EOF
+      - name: Start build
+        run: |
+          curl --silent --fail-with-body \
+            -X POST ${{ forgejo.event.repository.url }}/actions/workflows/build.yaml/dispatches \
+            -H 'Authorization: token ${{ forgejo.token }}' \
+            --json '{"ref":"${{ steps.commitNix.outputs.rev }}","inputs":{"publishBinaries":"true"}}'

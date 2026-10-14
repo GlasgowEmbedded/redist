@@ -1,16 +1,16 @@
-name: CI
+name: Build
 
 on:
   workflow_dispatch:
     inputs:
       signBinaries:
         description: "Upload binaries to SignPath"
-        required: true
+        required: false
         type: boolean
         default: false
       signingPolicy:
         description: "Signing policy slug: test-signing or release-signing"
-        required: true
+        required: false
         type: string
         default: test-signing
       publishBinaries:
@@ -35,6 +35,8 @@ jobs:
           nix profile add nixpkgs#{coreutils-full,gnused,nodejs,zip}
       - name: Check out source code
         uses: https://code.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          token: ${{ secrets.PUSH_TOKEN }}
       - name: Build MSI installers
         run: |
           nix build .#glasgow-installers --accept-flake-config --print-build-logs
