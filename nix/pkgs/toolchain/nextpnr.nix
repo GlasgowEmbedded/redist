@@ -16,12 +16,14 @@
 }:
 
 let
-  version = "0.11";
+  version = "0.11.1";
+
+  # Do not use tagged revisions when fetching, otherwise `CURRENT_GIT_VERSION` is formatted incorrectly.
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "nextpnr";
-    rev = "nextpnr-${version}";
-    hash = "sha256-mCB/myasr3+esrN4xg+GCU7k/C+SSy4opVl+lmm4nH4=";
+    rev = "62e659ed6748e9f60b2a4aa25dd4fe79a9605881";
+    hash = "sha256-khZwiivbQtYZHR0TCXVtsE2ap0dpNYOQClvQJ7Fd6tM=";
   };
 
   bba = buildPackages.stdenv.mkDerivation {

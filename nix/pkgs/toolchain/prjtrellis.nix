@@ -15,6 +15,7 @@ stdenv.mkDerivation rec {
   pname = "prjtrellis";
   version = "1.5";
 
+  # Do not use tagged revisions when fetching, otherwise `CURRENT_GIT_VERSION` is formatted incorrectly.
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "${pname}";

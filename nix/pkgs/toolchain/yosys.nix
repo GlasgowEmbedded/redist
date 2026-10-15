@@ -18,6 +18,7 @@ stdenv.mkDerivation rec {
   pname = "yosys";
   version = "0.68";
 
+  # Do not use tagged revisions when fetching, otherwise `YOSYS_CHECKOUT_INFO` is formatted incorrectly.
   src = fetchFromGitHub {
     owner = "YosysHQ";
     repo = "${pname}";
