@@ -8,7 +8,7 @@
 let
   glasgow-sources = callPackage ./sources.nix { };
 
-  wheels = glasgowPkgs.render { filename = "${glasgow-sources}/software/pdm.dist.lock"; };
+  wheels = glasgowPkgs.render { filename = "${glasgow-sources}/software/pylock.dist.toml"; };
 
   pip-filename = "pip-26.2.1-py3-none-any.whl";
   pip = fetchurl {

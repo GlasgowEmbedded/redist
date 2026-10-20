@@ -9,7 +9,7 @@ let
   src = callPackage ./sources.nix { };
 
   wheels = glasgowPkgs.render {
-    filename = "${src}/docs/manual/pdm.dist.lock";
+    filename = "${src}/docs/manual/pylock.dist.toml";
     hasCC = true;
   };
 in

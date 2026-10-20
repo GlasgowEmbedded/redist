@@ -1,6 +1,6 @@
 {
   buildPackages,
-  fetchPypi,
+  fetchurl,
   lib,
   runCommand,
   stdenv,
@@ -8,107 +8,56 @@
 }:
 
 let
-  # Convert the list of files into an attrset.
-  rewriteFiles =
-    files:
+  fetchPylockUrl =
+    { name, url, hashes }:
+    fetchurl {
+      inherit name url;
+      inherit (hashes) sha256;
+    };
+
+  findGenericWheel =
+    wheels:
+    lib.findFirst (wheel:
+      lib.hasSuffix "py3-none-any.whl" wheel.name
+    ) null wheels;
+
+  convertPackage =
+    package:
     let
-      mapped = map (f: {
-        name = f.file;
-        value = f.hash;
-      }) files;
+      wheel = findGenericWheel (package.wheels or []);
+      sdist = package.sdist or null;
     in
-    lib.listToAttrs mapped;
-
-  # Convert the list of packages into an attrset.
-  rewritePackages =
-    packages:
-    let
-      mapped = map (pkg: {
-        name = pkg.name;
-        value = {
-          version = pkg.version;
-          files = if pkg ? files then rewriteFiles pkg.files else null;
-        };
-      }) packages;
-    in
-    lib.listToAttrs mapped;
-
-  find =
-    suffix: files:
-    lib.foldlAttrs (
-      acc: k: _:
-      if acc != null then
-        acc
-      else if lib.hasSuffix suffix k then
-        k
-      else
-        null
-    ) null files;
-
-  findTarball = find ".tar.gz";
-  findWheel = find "py3-none-any.whl";
-
-  # Extract the wheel URL or the source tarball.
-  extract =
-    name: package:
-    let
-      inherit (package) version;
-
-      sourceName = findTarball package.files;
-      wheelName = findWheel package.files;
-
-      # Extract the source components.
-      # Unfortunately, there is no standard enforced upon naming source tarballs.
-      # This has led to everyone doing their own godforsaken naming scheme, so the nicest solution I've found is to
-      # work backwards and construct the tail of the source tarball, only to use it to lop off the head and carry
-      # it around like a fucking trophy. Kill me.
-      sourceTail = "-${version}.tar.gz";
-
-      # Extract the wheel components.
-      parsedWheel = lib.splitString "-" (lib.removeSuffix ".whl" wheelName);
-    in
-    if wheelName != null then
-      rec {
-        pname = builtins.elemAt parsedWheel 0;
-        version = builtins.elemAt parsedWheel 1;
-        dist = builtins.elemAt parsedWheel 2;
-        abi = builtins.elemAt parsedWheel 3;
-        platform = builtins.elemAt parsedWheel 4;
-
-        hash = package.files.${wheelName};
+    {
+      inherit (package) name version;
+    }
+    // (if wheel != null then
+      {
         format = "wheel";
-        python = dist;
+        src = fetchPylockUrl wheel;
+      }
+    else if sdist != null then
+      {
+        format = "sdist";
+        src = fetchPylockUrl package.sdist;
       }
     else
-      {
-        inherit version;
-        pname = lib.removeSuffix sourceTail sourceName;
-
-        hash = package.files.${sourceName};
-        format = "setuptools";
-      };
-
-  mkDerivation =
-    builder: pname: sources:
-    if sources.format == "setuptools" then builder sources else fetchPypi sources;
+      abort "expected at least one of wheel or sdist");
 
   mkDerivations =
-    filename: builder:
+    filename: buildSource:
     let
       data = fromTOML (builtins.readFile filename);
-      packages = rewritePackages data.package;
-      packages' = lib.filterAttrs (_: v: v.files != null) packages;
-      sources = lib.mapAttrs extract packages';
-      mkDerivation' = mkDerivation builder;
+      pkgs = lib.filter (package: package.name != "glasgow") data.packages;
+      srcs = map convertPackage pkgs;
+      drvs = map (source: buildSource.${source.format} source) srcs;
     in
-    lib.mapAttrs mkDerivation' sources;
+    drvs;
 
-  buildPythonPackage' =
-    python: hasCC: sources:
+  buildSdist =
+    python: hasCC: source:
     (if hasCC then stdenv.mkDerivation else stdenvNoCC.mkDerivation) {
-      inherit (sources) pname version;
-
-      src = fetchPypi sources;
+      pname = source.name;
+      inherit (source) version src;
 
       nativeBuildInputs = [
         (python.withPackages (
@@ -135,19 +84,22 @@ let
       hasCC ? false,
     }:
     let
-      drvs = mkDerivations filename (buildPythonPackage' python hasCC);
+      drvs = mkDerivations filename {
+        sdist = source: buildSdist python hasCC source;
+        wheel = source: source.src;
+      };
     in
     runCommand "mk-wheels" { } ''
       mkdir $out
 
-      ${lib.foldlAttrs (
-        acc: _: drv:
+      ${lib.foldl (
+        acc: drv:
         ''
           if [[ -f ${drv} ]]; then
-            # Derivation built via fetchPypi
+            # Derivation downloaded from PyPI
             cp -n ${drv} $out/${drv.name}
           else
-            # Derivation built via buildPythonPackage'
+            # Derivation built via buildSdist
             cp -n ${drv}/*.whl $out/
           fi
         ''
