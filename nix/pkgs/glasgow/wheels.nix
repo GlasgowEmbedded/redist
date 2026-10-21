@@ -10,10 +10,10 @@ let
 
   wheels = glasgowPkgs.render { filename = "${glasgow-sources}/software/pylock.dist.toml"; };
 
-  pip-filename = "pip-26.2.1-py3-none-any.whl";
+  pip-filename = "pip-26.2.2-py3-none-any.whl";
   pip = fetchurl {
     url = "https://files.pythonhosted.org/packages/py3/p/pip/${pip-filename}";
-    hash = "sha256-cROK3x9MqQDNt9KJwht0lDKfIzK22F8OHEIQjAOE7T4=";
+    hash = "sha256-/X9N+oGQ4BQBO58I8+lz9OTCb/0XmiBIlVM6clSBOnA=";
   };
 in
 runCommand "wheels" { } ''
