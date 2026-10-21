@@ -4,7 +4,6 @@
   lib,
   runCommand,
   stdenv,
-  stdenvNoCC,
 }:
 
 let
