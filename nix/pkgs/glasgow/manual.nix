@@ -1,4 +1,5 @@
 {
+  buildPackages,
   callPackage,
   glasgowPkgs,
   python3,
@@ -10,7 +11,17 @@ let
 
   wheels = glasgowPkgs.render {
     filename = "${src}/docs/manual/pylock.dist.toml";
-    hasCC = true;
+
+    overlays = {
+      pyccobs = finalAttrs: prevAttrs: {
+        nativeBuildInputs = prevAttrs.nativeBuildInputs ++ (with buildPackages; [
+          cmake
+          ninja
+        ]);
+
+        dontUseCmakeConfigure = true;
+      };
+    };
   };
 in
 stdenvNoCC.mkDerivation {
@@ -29,6 +40,11 @@ stdenvNoCC.mkDerivation {
     source .venv/bin/activate
 
     for f in ${wheels}/*.whl ${glasgowPkgs.wheels}/*.whl; do
+      # Skip native dependencies that might've been built as part of the Glasgow wheels.
+      if [[ "$f" =~ (mingw) ]]; then
+        continue
+      fi
+
       python -m pip install --no-cache-dir --no-deps $f
     done
 

@@ -54,8 +54,8 @@ let
     drvs;
 
   buildSdist =
-    python: hasCC: source:
-    (if hasCC then stdenv.mkDerivation else stdenvNoCC.mkDerivation) {
+    python: overlays: source:
+    (stdenv.mkDerivation {
       pname = source.name;
       inherit (source) version src;
 
@@ -75,17 +75,19 @@ let
       installPhase = ''
         # no-op
       '';
-    };
+
+      strictDeps = true;
+    }).overrideAttrs (overlays.${source.name} or (_: { }));
 
   mkWheels =
     {
       filename,
       python ? buildPackages.python3,
-      hasCC ? false,
+      overlays ? { },
     }:
     let
       drvs = mkDerivations filename {
-        sdist = source: buildSdist python hasCC source;
+        sdist = source: buildSdist python overlays source;
         wheel = source: source.src;
       };
     in

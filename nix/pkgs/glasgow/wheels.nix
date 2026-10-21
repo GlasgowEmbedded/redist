@@ -1,14 +1,47 @@
 {
+  buildPackages,
   callPackage,
+  fetchpatch2,
   fetchurl,
   glasgowPkgs,
+  stdenv,
   runCommand,
 }:
 
 let
   glasgow-sources = callPackage ./sources.nix { };
 
-  wheels = glasgowPkgs.render { filename = "${glasgow-sources}/software/pylock.dist.toml"; };
+  wheels = glasgowPkgs.render {
+    filename = "${glasgow-sources}/software/pylock.dist.toml";
+
+    overlays = {
+      pyccobs = finalAttrs: prevAttrs: {
+        nativeBuildInputs = prevAttrs.nativeBuildInputs ++ (with buildPackages; [
+          cmake
+          ninja
+        ]);
+
+        patches = [
+          (fetchpatch2 {
+            url = "https://github.com/flumf/pyccobs/commit/c874e71df436017571b62834fc034e0c4646c5bf.patch";
+            hash = "sha256-D1QVTW/yy99fpmJ1D7OdzT32unN753recWztOouiUbU=";
+          })
+        ];
+
+        postConfigure = ''
+          export CMAKE_ARGS=$cmakeFlags
+          export CMAKE_GENERATOR=Ninja
+        '';
+
+        buildPhase = ''
+          python setup.py bdist_wheel --dist-dir=$out \
+            --plat-name=mingw-${stdenv.hostPlatform.uname.processor}-ucrt-gnu
+        '';
+
+        dontUseCmakeConfigure = true;
+      };
+    };
+  };
 
   pip-filename = "pip-26.2.2-py3-none-any.whl";
   pip = fetchurl {
