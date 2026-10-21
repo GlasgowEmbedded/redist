@@ -21,13 +21,6 @@ let
           ninja
         ]);
 
-        patches = [
-          (fetchpatch2 {
-            url = "https://github.com/flumf/pyccobs/commit/c874e71df436017571b62834fc034e0c4646c5bf.patch";
-            hash = "sha256-D1QVTW/yy99fpmJ1D7OdzT32unN753recWztOouiUbU=";
-          })
-        ];
-
         postConfigure = ''
           export CMAKE_ARGS=$cmakeFlags
           export CMAKE_GENERATOR=Ninja
