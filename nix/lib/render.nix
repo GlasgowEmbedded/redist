@@ -8,39 +8,42 @@
 
 let
   fetchPylockUrl =
-    { name, url, hashes }:
+    {
+      name,
+      url,
+      hashes,
+    }:
     fetchurl {
       inherit name url;
       inherit (hashes) sha256;
     };
 
   findGenericWheel =
-    wheels:
-    lib.findFirst (wheel:
-      lib.hasSuffix "py3-none-any.whl" wheel.name
-    ) null wheels;
+    wheels: lib.findFirst (wheel: lib.hasSuffix "py3-none-any.whl" wheel.name) null wheels;
 
   convertPackage =
     package:
     let
-      wheel = findGenericWheel (package.wheels or []);
+      wheel = findGenericWheel (package.wheels or [ ]);
       sdist = package.sdist or null;
     in
     {
       inherit (package) name version;
     }
-    // (if wheel != null then
-      {
-        format = "wheel";
-        src = fetchPylockUrl wheel;
-      }
-    else if sdist != null then
-      {
-        format = "sdist";
-        src = fetchPylockUrl package.sdist;
-      }
-    else
-      abort "expected at least one of wheel or sdist");
+    // (
+      if wheel != null then
+        {
+          format = "wheel";
+          src = fetchPylockUrl wheel;
+        }
+      else if sdist != null then
+        {
+          format = "sdist";
+          src = fetchPylockUrl package.sdist;
+        }
+      else
+        abort "expected at least one of wheel or sdist"
+    );
 
   mkDerivations =
     filename: buildSource:
@@ -76,7 +79,8 @@ let
       '';
 
       strictDeps = true;
-    }).overrideAttrs (overlays.${source.name} or (_: { }));
+    }).overrideAttrs
+      (overlays.${source.name} or (_: { }));
 
   mkWheels =
     {

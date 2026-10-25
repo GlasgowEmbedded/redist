@@ -26,23 +26,13 @@ final: prev: {
 
   glib =
     if final.stdenv.hostPlatform.isMinGW then
-      (prev.glib.override {
-        libsysprof-capture = null;
+      prev.glib.override {
         withIntrospection = false;
-
-        python3 = final.buildPackages.python3;
-        python3Packages = final.buildPackages.python3Packages;
-      }).overrideAttrs
-        (oldAttrs: {
-          mesonFlags = oldAttrs.mesonFlags ++ [
-            "-Dsysprof=disabled"
-          ];
-        })
+      }
     else
       prev.glib;
 
-  glibmm =
-    if final.stdenv.hostPlatform.isMinGW then final.callPackage ./glibmm.nix { } else prev.glibmm;
+  glibmm = final.callPackage ./glibmm.nix { };
 
   libconfuse = prev.libconfuse.overrideAttrs (oldAttrs: {
     meta.platforms = oldAttrs.meta.platforms ++ lib.platforms.windows;

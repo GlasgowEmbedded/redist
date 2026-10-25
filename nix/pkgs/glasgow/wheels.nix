@@ -1,7 +1,6 @@
 {
   buildPackages,
   callPackage,
-  fetchpatch2,
   fetchurl,
   glasgowPkgs,
   stdenv,
@@ -16,10 +15,12 @@ let
 
     overlays = {
       pyccobs = finalAttrs: prevAttrs: {
-        nativeBuildInputs = prevAttrs.nativeBuildInputs ++ (with buildPackages; [
-          cmake
-          ninja
-        ]);
+        nativeBuildInputs =
+          prevAttrs.nativeBuildInputs
+          ++ (with buildPackages; [
+            cmake
+            ninja
+          ]);
 
         postConfigure = ''
           export CMAKE_ARGS=$cmakeFlags

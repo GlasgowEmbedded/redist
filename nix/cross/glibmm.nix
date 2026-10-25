@@ -1,7 +1,7 @@
 {
-  buildPackages,
   glib,
-  libsigcxx,
+  glibmm_2_4,
+  libsigcxx_2_0,
   meson,
   ninja,
   pkg-config,
@@ -10,7 +10,7 @@
 }:
 
 stdenv.mkDerivation {
-  inherit (buildPackages.glibmm) pname version src;
+  inherit (glibmm_2_4) pname version src;
 
   nativeBuildInputs = [
     meson
@@ -20,7 +20,7 @@ stdenv.mkDerivation {
 
   propagatedBuildInputs = [
     glib
-    libsigcxx
+    libsigcxx_2_0
     windows.pthreads
   ];
 

@@ -14,10 +14,12 @@ let
 
     overlays = {
       pyccobs = finalAttrs: prevAttrs: {
-        nativeBuildInputs = prevAttrs.nativeBuildInputs ++ (with buildPackages; [
-          cmake
-          ninja
-        ]);
+        nativeBuildInputs =
+          prevAttrs.nativeBuildInputs
+          ++ (with buildPackages; [
+            cmake
+            ninja
+          ]);
 
         dontUseCmakeConfigure = true;
       };
