@@ -21,18 +21,20 @@ on:
 
 jobs:
   build:
-    runs-on: nixos-latest
+    runs-on: ["xlarge", "debian-13-x86_64"]
     steps:
+      - name: Install Nix
+        uses: https://github.com/cachix/install-nix-action@ab739621df7a23f52766f9ccc97f38da6b7af14f # v31
       - name: Install dependencies
         run: |
-          cat >/etc/nix/nix.conf <<EOF
+          sudo tee /etc/nix/nix.conf <<EOF
           experimental-features = flakes nix-command
 
           cores = 0
           max-jobs = auto
           EOF
 
-          nix profile add nixpkgs#{coreutils-full,gnused,nodejs,zip,git-pages-cli}
+          nix profile add nixpkgs#{zip,git-pages-cli}
       - name: Check out source code
         uses: https://code.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -40,7 +42,7 @@ jobs:
       - name: Build MSI installers
         run: |
           nix build .#glasgow-installers --accept-flake-config --print-build-logs
-          zip -j GlasgowInterfaceExplorer.zip result/*.msi
+          zip -0 -j GlasgowInterfaceExplorer.zip result/*.msi
       - name: Upload to Forgejo
         uses: https://code.forgejo.org/forgejo/upload-artifact@16871d9e8cfcf27ff31822cac382bbb5450f1e1e # v4
         with:

@@ -10,18 +10,14 @@ on:
 
 jobs:
   update:
-    runs-on: nixos-latest
+    runs-on: ["small", "debian-13-x86_64"]
     steps:
+      - name: Install Nix
+        uses: https://github.com/cachix/install-nix-action@ab739621df7a23f52766f9ccc97f38da6b7af14f # v31
       - name: Install dependencies
         run: |
-          cat >/etc/nix/nix.conf <<EOF
-          experimental-features = flakes nix-command
-
-          cores = 0
-          max-jobs = auto
-          EOF
-
-          nix profile add nixpkgs#{nodejs,jq}
+          sudo apt-get -y update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get -y install curl jq git
       - name: Check out source code
         uses: https://code.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - id: fetchGit
